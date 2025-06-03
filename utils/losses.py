@@ -55,9 +55,9 @@ def sort_loss(predictions, targets):
     loss = compute_ctc_loss(predictions, targets, blank_label=predictions.shape[1]-1)
     return loss
 
-def image_classification_loss(predictions, certainties, targets, use_most_certain=True):
+def image_classification_loss(predictions, certainties, targets, use_most_certain=True, class_weights=None):
     """
-    Computes the maze loss with auto-extending cirriculum.
+    Computes the image classification loss, with class weights for imbalanced datasets.
 
     Predictions are of shape: (B, class, internal_ticks),
     Certainties are of shape: (B, 2, internal_ticks), 
@@ -65,10 +65,13 @@ def image_classification_loss(predictions, certainties, targets, use_most_certai
     Targets are of shape: [B]
 
     use_most_certain will select either the most certain point or the final point. 
+    class_weights: Optional tensor of weights for each class (for CrossEntropyLoss).
     """
     targets_expanded = torch.repeat_interleave(targets.unsqueeze(-1), predictions.size(-1), -1)
-    # Losses are of shape [B, internal_ticks]
-    losses = nn.CrossEntropyLoss(reduction='none')(predictions, targets_expanded)
+
+    # Standard multi-class cross-entropy with class weights
+    loss_fn = nn.CrossEntropyLoss(reduction='none', weight=class_weights)
+    losses = loss_fn(predictions, targets_expanded)
         
     loss_index_1 = losses.argmin(dim=1)
     loss_index_2 = certainties[:,1].argmax(-1)
@@ -196,3 +199,34 @@ def qamnist_loss(predictions, certainties, targets, use_most_certain=True):
 
     loss = (loss_minimum_ce + loss_selected)/2
     return loss, loss_index_2
+
+def attention_diversity_loss(attention_weights):
+    """Encourage different heads to attend to different locations"""
+    # Input attention_weights expected shape: (Batch, Heads, Locations) 
+    # after squeezing the QuerySeqLen dimension if it was 1.
+    B, H, L = attention_weights.shape  
+    
+    # Compute pairwise similarities between heads
+    # Initialize similarities tensor on the same device as attention_weights
+    similarities = torch.zeros(H, H, device=attention_weights.device)
+    
+    # Iterate over unique pairs of heads
+    for i in range(H):
+        for j in range(i + 1, H):
+            # Cosine similarity between attention patterns of head i and head j across all batches
+            # F.cosine_similarity expects inputs of shape (N, D) or (D), where N is batch_size
+            # attention_weights[:, i] has shape (B, L)
+            # attention_weights[:, j] has shape (B, L)
+            sim = F.cosine_similarity(attention_weights[:, i], attention_weights[:, j], dim=1).mean() # mean over batch
+            similarities[i, j] = sim
+            # Symmetrically fill the matrix (optional, as we only take mean of upper triangle)
+            # similarities[j, i] = sim 
+    
+    # Penalize high similarities
+    # We only care about the upper triangle (excluding diagonal) for unique pairs
+    if H > 1:
+        diversity_loss = similarities[torch.triu_indices(H, H, offset=1)].mean()
+    else:
+        diversity_loss = torch.tensor(0.0, device=attention_weights.device) # No pairs if only one head
+        
+    return diversity_loss

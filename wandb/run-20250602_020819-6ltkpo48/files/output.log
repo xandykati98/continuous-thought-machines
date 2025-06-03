@@ -1,0 +1,14 @@
+Using device: cuda
+Froze base model parameters.
+Adapter parameters are trainable.
+Test set size: 1000
+Prepared a fixed sample from test_ds for qualitative checking. Prompt length: 453 tokens.
+Training set size: 68841
+Starting dataset preprocessing for training data...
+Training dataset preprocessing finished.
+Train DataLoader created with batch size 2. Number of batches: 34421
+Traceback (most recent call last):
+  File "C:\Users\Alexandre\Documents\GitHub\continuous-thought-machines\tasks\adapter_llm\train.py", line 299, in <module>
+    train_dataloader = DataLoader(tokenized_train_ds, batch_size=batch_size, shuffle=True, collator=data_collator)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: DataLoader.__init__() got an unexpected keyword argument 'collator'

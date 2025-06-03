@@ -114,6 +114,7 @@ class ContinuousThoughtMachine(nn.Module):
         self.neuron_select_type = neuron_select_type
         self.memory_length = memory_length
         dropout_nlm = dropout if dropout_nlm is None else dropout_nlm
+        self.attention_weights_for_loss_buffer = []
 
         # --- Assertions ---
         self.verify_args()
@@ -479,6 +480,7 @@ class ContinuousThoughtMachine(nn.Module):
     def forward(self, x, track=False):
         B = x.size(0)
         device = x.device
+        self.attention_weights_for_loss_buffer.clear()
 
         # --- Tracking Initialization ---
         pre_activations_tracking = []
@@ -517,6 +519,7 @@ class ContinuousThoughtMachine(nn.Module):
             # --- Interact with Data via Attention ---
             q = self.q_proj(synchronisation_action).unsqueeze(1)
             attn_out, attn_weights = self.attention(q, kv, kv, average_attn_weights=False, need_weights=True)
+            self.attention_weights_for_loss_buffer.append(attn_weights)
             attn_out = attn_out.squeeze(1)
             pre_synapse_input = torch.concatenate((attn_out, activated_state), dim=-1)
 

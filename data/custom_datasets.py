@@ -6,6 +6,9 @@ import numpy as np
 from tqdm.auto import tqdm
 from PIL import Image
 from datasets import load_dataset
+from torchvision.datasets.vision import VisionDataset
+from torchvision.datasets.utils import check_integrity, download_and_extract_archive, download_url, verify_str_arg
+import os
 
 class SortDataset(Dataset):
     def __init__(self, N):
@@ -322,3 +325,87 @@ class ParityDataset(Dataset):
         cumsum = torch.cumsum(negatives, dim=0)
         target = (cumsum % 2 != 0).to(torch.long)
         return vector, target
+
+# Helper function for SARDClassificationDataset
+def _sard_has_human_in_label_file(label_file_path: str) -> bool:
+    """Checks if a SARD label file contains any valid bounding box (indicating a human)."""
+    try:
+        with open(label_file_path, 'r') as f:
+            for line in f:
+                parts = line.strip().split()
+                # A valid line has 5 parts: class_id, x_center, y_center, width, height
+                if len(parts) == 5:
+                    try:
+                        # Attempt to convert to float to ensure parts are numeric
+                        # class_id should be int, but float conversion check is fine here
+                        [float(p) for p in parts]
+                        return True  # Found a valid bounding box line
+                    except ValueError:
+                        continue # Line parts are not all numeric
+    except IOError:
+        # Could be FileNotFoundError or other read issues
+        return False
+    return False  # No valid bounding box line found or file not readable
+
+
+class SARDClassificationDataset(VisionDataset):
+    """
+    SARD (Search and Rescue Dataset) for binary classification: "has human" vs "no human".
+    A "has human" label is assigned if the corresponding label file contains at least one bounding box.
+    """
+    def __init__(self, root, split='train', transform=None, target_transform=None):
+        super().__init__(root, transform=transform, target_transform=target_transform)
+        
+        # root is expected to be the path to the 'search-and-rescue' directory
+        # e.g., /path/to/datasets/sard-search-and-rescue
+        self.root = root
+        self.split = verify_str_arg(split, "split", ("train", "valid", "test"))
+        
+        self.image_dir = os.path.join(self.root, self.split, 'images')
+        self.label_dir = os.path.join(self.root, self.split, 'labels')
+        
+        if not os.path.isdir(self.image_dir):
+            raise FileNotFoundError(f"Image directory not found: {self.image_dir}")
+        # Label directory might not exist or be fully populated, which is handled by _sard_has_human_in_label_file
+
+        self.samples = []
+        self._load_metadata()
+
+    def _load_metadata(self):
+        for img_filename in os.listdir(self.image_dir):
+            if img_filename.lower().endswith(('.png', '.jpg', '.jpeg')):
+                img_path = os.path.join(self.image_dir, img_filename)
+                
+                # Determine label based on the corresponding .txt file in labels_dir
+                label_filename = os.path.splitext(img_filename)[0] + '.txt'
+                label_path = os.path.join(self.label_dir, label_filename)
+                
+                has_human = _sard_has_human_in_label_file(label_path)
+                # Label: 1 if "has human", 0 if "no human"
+                self.samples.append((img_path, 1 if has_human else 0))
+
+        if not self.samples:
+            print(f"Warning: No image samples found in {self.image_dir} for split {self.split}.")
+    
+
+    def __getitem__(self, index: int):
+        img_path, target = self.samples[index]
+        try:
+            img = Image.open(img_path).convert('RGB')
+        except FileNotFoundError:
+            # This should ideally not happen if _load_metadata worked correctly
+            raise FileNotFoundError(f"Image file not found during __getitem__: {img_path}")
+        except Exception as e:
+            raise IOError(f"Error opening image {img_path}: {e}")
+
+
+        if self.transform is not None:
+            img = self.transform(img)
+
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+        
+        return img, target
+
+    def __len__(self) -> int:
+        return len(self.samples)

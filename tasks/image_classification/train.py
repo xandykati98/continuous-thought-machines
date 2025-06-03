@@ -13,7 +13,7 @@ if torch.cuda.is_available():
 import torch.nn as nn
 from tqdm.auto import tqdm
 
-from data.custom_datasets import ImageNet
+from data.custom_datasets import ImageNet, SARDClassificationDataset
 from torchvision import datasets
 from torchvision import transforms
 from tasks.image_classification.imagenet_classes import IMAGENET2012_CLASSES
@@ -23,6 +23,7 @@ from models.ff import FFBaseline
 from tasks.image_classification.plotting import plot_neural_dynamics, make_classification_gif
 from utils.housekeeping import set_seed, zip_python_code
 from utils.losses import image_classification_loss # Used by CTM, LSTM
+from utils.losses import attention_diversity_loss # Added for CTM attention diversity
 from utils.schedulers import WarmupCosineAnnealingLR, WarmupMultiStepLR, warmup
 
 from autoclip.torch import QuantileClip
@@ -53,6 +54,21 @@ warnings.filterwarnings(
     UserWarning,
     r"^PIL\.TiffImagePlugin$" # Using a regular expression to match the module.
 )
+
+# Helper function for MCC
+def calculate_mcc(tp, tn, fp, fn):
+    """Calculates Matthews Correlation Coefficient."""
+    # Cast to float64 to prevent overflow with large numbers
+    tp = np.float64(tp)
+    tn = np.float64(tn)
+    fp = np.float64(fp)
+    fn = np.float64(fn)
+
+    numerator = (tp * tn) - (fp * fn)
+    denominator_sq = (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)
+    if denominator_sq == 0:
+        return 0.0 # Avoid division by zero; MCC is 0 if any sum in denom is zero
+    return numerator / np.sqrt(denominator_sq)
 
 
 def parse_args():
@@ -107,6 +123,7 @@ def parse_args():
 
     # Housekeeping
     parser.add_argument('--log_dir', type=str, default='logs/scratch', help='Directory for logging.')
+    parser.add_argument('--attention_diversity_coeff', type=float, default=0.0, help='Coefficient for attention diversity loss (CTM only).')
     parser.add_argument('--dataset', type=str, default='cifar10', help='Dataset to use.')
     parser.add_argument('--data_root', type=str, default='data/', help='Where to save dataset.')
     parser.add_argument('--save_every', type=int, default=1000, help='Save checkpoints every this many iterations.')
@@ -121,6 +138,10 @@ def parse_args():
 
 
     args = parser.parse_args()
+    # Add SARD specific default for data_root if dataset is sard
+    if args.dataset == 'sard' and args.data_root == 'data/': # if default 'data/' is used
+        args.data_root = 'data/sard-search-and-rescue' # Default SARD path relative to workspace
+        print(f"Dataset is SARD, changing data_root to default: {args.data_root}")
     return args
 
 
@@ -180,6 +201,52 @@ def get_dataset(dataset, root):
         test_data = datasets.CIFAR100(root, train=False, transform=test_transform, download=True)
         idx_order = np.argsort(np.array(list(train_data.class_to_idx.values())))
         class_labels = list(np.array(list(train_data.class_to_idx.keys()))[idx_order])
+    elif dataset=='sard': # Added SARD dataset handling
+        
+        dataset_mean = [0.44452422857284546, 0.45209550857543945, 0.29234638810157776]
+        dataset_std = [0.19780108332633972, 0.19067855179309845, 0.15231430530548096]
+
+        train_transform = transforms.Compose([
+            transforms.Resize((128, 128)),
+            transforms.RandomHorizontalFlip(),
+            # transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1), # Basic augmentation
+            transforms.ToTensor(),
+            transforms.Normalize(mean=dataset_mean, std=dataset_std)
+        ])
+        test_transform = transforms.Compose([
+            transforms.Resize((128, 128)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=dataset_mean, std=dataset_std)
+        ])
+        
+        
+        class_labels = ['no human', 'has human'] # Binary classification
+        
+        # The SARDClassificationDataset expects the root to be the base SARD directory 
+        # e.g., 'data/sard-search-and-rescue' which contains 'train', 'valid', 'test' subdirs
+        # The `root` argument to `get_dataset` should point to this base SARD directory.
+        train_data = SARDClassificationDataset(root=root, split='train', transform=train_transform)
+
+        # For SARD, often the Kaggle dataset splits into train/valid/test. 
+        # If your SARD data only has 'train' and 'test', you might need to split 'train' further
+        # or use the provided 'valid' set if available.
+        # Assuming a 'valid' split exists for now, similar to train/test.
+        # You may need to adjust this if your SARD directory structure is different or if 'valid' is missing.
+        valid_root_path = os.path.join(os.path.dirname(root), 'valid') if not os.path.exists(os.path.join(root, 'valid')) and os.path.exists(os.path.join(os.path.dirname(root), 'valid')) else root
+        if not os.path.exists(os.path.join(root, 'valid')):
+            print(f"Warning: No 'valid' directory found directly in {root}. Trying to use test set as validation or you need to create a validation split.")
+            # Option 1: Use the test set as validation if no dedicated validation set
+            # test_data = SARDClassificationDataset(root=root, split='test', transform=test_transform)
+            # Option 2: Create a validation split from training data (more involved)
+            # For now, let's assume if 'valid' isn't in root, we might look for it one level up (common in Kaggle downloads)
+            # Or, more simply, just try to load 'test' as the validation set if 'valid' is truly missing.
+            # This part needs to be robust based on how the SARD data is structured in `args.data_root`
+            # Trying to use the 'test' split for validation if 'valid' is not found. 
+            # This may not be ideal for rigorous evaluation.
+            test_data = SARDClassificationDataset(root=root, split='test', transform=test_transform)
+        else:
+            test_data = SARDClassificationDataset(root=root, split='valid', transform=test_transform) # Using 'valid' as test_data for consistency in var name
+
     else:
         raise NotImplementedError
 
@@ -195,8 +262,11 @@ if __name__=='__main__':
     set_seed(args.seed, False)
     if not os.path.exists(args.log_dir): os.makedirs(args.log_dir)
 
-    assert args.dataset in ['cifar10', 'cifar100', 'imagenet']
+    assert args.dataset in ['cifar10', 'cifar100', 'imagenet', 'sard']
 
+    print("CUDA available:", torch.cuda.is_available())
+    print("Torch version:", torch.__version__)
+    
     # Data
     train_data, test_data, class_labels, dataset_mean, dataset_std = get_dataset(args.dataset, args.data_root)
     
@@ -206,6 +276,7 @@ if __name__=='__main__':
     
     prediction_reshaper = [-1]  # Problem specific
     args.out_dims = len(class_labels)
+    print(f"Number of output classes (args.out_dims) set to: {args.out_dims}")
 
     # For total reproducibility
     zip_python_code(f'{args.log_dir}/repo_state.zip')
@@ -321,12 +392,14 @@ if __name__=='__main__':
     test_losses = []
     train_accuracies = []
     test_accuracies = []
+    train_mccs = [] if args.dataset == 'sard' or args.out_dims == 2 else None # MCC for SARD/binary
+    test_mccs = [] if args.dataset == 'sard' or args.out_dims == 2 else None # MCC for SARD/binary
     iters = []
     # Conditional metrics for CTM/LSTM
     train_accuracies_most_certain = [] if args.model in ['ctm', 'lstm'] else None
     test_accuracies_most_certain = [] if args.model in ['ctm', 'lstm'] else None
 
-    scaler = torch.amp.GradScaler("cuda" if "cuda" in device else "cpu", enabled=args.use_amp)
+    scaler = torch.cuda.amp.GradScaler("cuda", enabled=args.use_amp) if "cuda" in device else torch.amp.GradScaler("cpu", enabled=args.use_amp)
 
     # Reloading logic
     if args.reload:
@@ -355,6 +428,9 @@ if __name__=='__main__':
                 if args.model in ['ctm', 'lstm']:
                     train_accuracies_most_certain = checkpoint['train_accuracies_most_certain']
                     test_accuracies_most_certain = checkpoint['test_accuracies_most_certain']
+                if (args.dataset == 'sard' or args.out_dims == 2) and 'train_mccs' in checkpoint: # Load MCC if present
+                    train_mccs = checkpoint['train_mccs']
+                    test_mccs = checkpoint['test_mccs']
 
             else:
                 print('Only reloading model!')
@@ -380,6 +456,17 @@ if __name__=='__main__':
         if args.model == 'ctm':
             model.synapses = torch.compile(model.synapses, mode='reduce-overhead', fullgraph=True)
 
+    # Define class weights for SARD dataset if applicable
+    sard_class_weights = None
+    if args.dataset == 'sard':
+        # For SARD: Class 0 ("no human") is minority, Class 1 ("has human") is majority (4.5:1 ratio)
+        # For CrossEntropyLoss, weights should be inverse of class frequency
+        # If class 1 is 4.5x more frequent than class 0, then:
+        # weight_class_0 = 4.5, weight_class_1 = 1.0 (normalized)
+        # This gives more importance to the minority class (no human)
+        sard_class_weights = torch.tensor([4.5, 1.0], device=device)
+        print(f"Using CrossEntropyLoss class weights for SARD: {sard_class_weights}")
+
     # Training
     iterator = iter(trainloader)
 
@@ -404,24 +491,71 @@ if __name__=='__main__':
                 if args.do_compile: # CUDAGraph marking for clean compile
                      torch.compiler.cudagraph_mark_step_begin()
 
+                batch_mcc = None # Initialize batch_mcc
                 if args.model == 'ctm':
                     predictions, certainties, synchronisation = model(inputs)
-                    loss, where_most_certain = image_classification_loss(predictions, certainties, targets, use_most_certain=True)
-                    accuracy = (predictions.argmax(1)[torch.arange(predictions.size(0), device=predictions.device),where_most_certain] == targets).float().mean().item()
+                    loss_args = {'predictions': predictions, 'certainties': certainties, 'targets': targets, 'use_most_certain': True}
+                    if args.dataset == 'sard':
+                        loss_args['class_weights'] = sard_class_weights
+                    loss, where_most_certain = image_classification_loss(**loss_args)
+                    
+                    if args.attention_diversity_coeff > 0.0 and hasattr(model, 'attention_weights_for_loss_buffer'):
+                        attention_weights_buffer = model.attention_weights_for_loss_buffer
+                        if attention_weights_buffer: # Check if the buffer is not empty
+                            last_iter_attn_weights = attention_weights_buffer[-1]
+                            # Squeeze QuerySeqLen dim: (B, H, 1, KeySeqLen) -> (B, H, KeySeqLen)
+                            squeezed_attn_weights = last_iter_attn_weights.squeeze(2)
+                            div_loss = attention_diversity_loss(squeezed_attn_weights)
+                            loss = loss + args.attention_diversity_coeff * div_loss
+
+                    # Accuracy for pbar
+                    preds_for_acc = predictions.argmax(1)[torch.arange(predictions.size(0), device=predictions.device),where_most_certain]
+
+                    accuracy = (preds_for_acc == targets).float().mean().item()
                     pbar_desc = f'CTM Loss={loss.item():0.3f}. Acc={accuracy:0.3f}. LR={current_lr:0.6f}. Where_certain={where_most_certain.float().mean().item():0.2f}+-{where_most_certain.float().std().item():0.2f} ({where_most_certain.min().item():d}<->{where_most_certain.max().item():d})'
+                    if args.dataset == 'sard' or args.out_dims == 2:
+                        tp = torch.sum((preds_for_acc == 1) & (targets == 1)).item()
+                        tn = torch.sum((preds_for_acc == 0) & (targets == 0)).item()
+                        fp = torch.sum((preds_for_acc == 1) & (targets == 0)).item()
+                        fn = torch.sum((preds_for_acc == 0) & (targets == 1)).item()
+                        batch_mcc = calculate_mcc(tp, tn, fp, fn)
+                        pbar_desc += f'. MCC={batch_mcc:0.3f}'
 
                 elif args.model == 'lstm':
                     predictions, certainties, synchronisation = model(inputs)
-                    loss, where_most_certain = image_classification_loss(predictions, certainties, targets, use_most_certain=True)
+                    loss_args = {'predictions': predictions, 'certainties': certainties, 'targets': targets, 'use_most_certain': True}
+                    if args.dataset == 'sard':
+                        loss_args['class_weights'] = sard_class_weights
+                    loss, where_most_certain = image_classification_loss(**loss_args)
                     # LSTM where_most_certain will just be -1 because use_most_certain is False owing to stability issues with LSTM training
-                    accuracy = (predictions.argmax(1)[torch.arange(predictions.size(0), device=predictions.device),where_most_certain] == targets).float().mean().item()
+                    preds_for_acc = predictions.argmax(1)[torch.arange(predictions.size(0), device=predictions.device),where_most_certain]
+                    accuracy = (preds_for_acc == targets).float().mean().item()
                     pbar_desc = f'LSTM Loss={loss.item():0.3f}. Acc={accuracy:0.3f}. LR={current_lr:0.6f}. Where_certain={where_most_certain.float().mean().item():0.2f}+-{where_most_certain.float().std().item():0.2f} ({where_most_certain.min().item():d}<->{where_most_certain.max().item():d})'
+                    if args.dataset == 'sard' or args.out_dims == 2:
+                        tp = torch.sum((preds_for_acc == 1) & (targets == 1)).item()
+                        tn = torch.sum((preds_for_acc == 0) & (targets == 0)).item()
+                        fp = torch.sum((preds_for_acc == 1) & (targets == 0)).item()
+                        fn = torch.sum((preds_for_acc == 0) & (targets == 1)).item()
+                        batch_mcc = calculate_mcc(tp, tn, fp, fn)
+                        pbar_desc += f'. MCC={batch_mcc:0.3f}'
 
                 elif args.model == 'ff':
                     predictions = model(inputs)
-                    loss = nn.CrossEntropyLoss()(predictions, targets)
-                    accuracy = (predictions.argmax(1) == targets).float().mean().item()
+                    if args.dataset == 'sard':
+                        loss = nn.CrossEntropyLoss(weight=sard_class_weights)(predictions, targets)
+                    else:
+                        loss = nn.CrossEntropyLoss()(predictions, targets)
+                    
+                    preds_for_acc = predictions.argmax(1)
+                    accuracy = (preds_for_acc == targets).float().mean().item()
                     pbar_desc = f'FF Loss={loss.item():0.3f}. Acc={accuracy:0.3f}. LR={current_lr:0.6f}'
+                    if args.dataset == 'sard' or args.out_dims == 2:
+                        tp = torch.sum((preds_for_acc == 1) & (targets == 1)).item()
+                        tn = torch.sum((preds_for_acc == 0) & (targets == 0)).item()
+                        fp = torch.sum((preds_for_acc == 1) & (targets == 0)).item()
+                        fn = torch.sum((preds_for_acc == 0) & (targets == 1)).item()
+                        batch_mcc = calculate_mcc(tp, tn, fp, fn)
+                        pbar_desc += f'. MCC={batch_mcc:0.3f}'
 
             scaler.scale(loss).backward()
 
@@ -447,6 +581,8 @@ if __name__=='__main__':
                 current_test_accuracies = [] # Holds list of accuracies per tick for CTM/LSTM, single value for FF
                 current_train_accuracies_most_certain = [] # Only for CTM/LSTM
                 current_test_accuracies_most_certain = [] # Only for CTM/LSTM
+                current_train_mcc = None # For SARD/binary
+                current_test_mcc = None  # For SARD/binary
 
 
                 # Reset BN stats using train mode
@@ -463,6 +599,8 @@ if __name__=='__main__':
                     all_predictions_list = [] # List to store raw predictions (B, C, T) or (B, C)
                     all_predictions_most_certain_list = [] # Only for CTM/LSTM
                     all_losses = []
+                    # For MCC (binary classification)
+                    all_preds_for_mcc_list = [] # Store final predictions (argmax or direct if binary) for MCC
 
                     with tqdm(total=len(loader), initial=0, leave=False, position=1, dynamic_ncols=True) as pbar_inner:
                         for inferi, (inputs, targets) in enumerate(loader):
@@ -473,20 +611,37 @@ if __name__=='__main__':
                             # Model-specific forward and loss for evaluation
                             if args.model == 'ctm':
                                 these_predictions, certainties, _ = model(inputs)
-                                loss, where_most_certain = image_classification_loss(these_predictions, certainties, targets, use_most_certain=True)
+                                loss_args_eval = {'predictions': these_predictions, 'certainties': certainties, 'targets': targets, 'use_most_certain': True}
+                                if args.dataset == 'sard':
+                                    loss_args_eval['class_weights'] = sard_class_weights
+                                loss, where_most_certain = image_classification_loss(**loss_args_eval)
                                 all_predictions_list.append(these_predictions.argmax(1).detach().cpu().numpy()) # Shape (B, T)
                                 all_predictions_most_certain_list.append(these_predictions.argmax(1)[torch.arange(these_predictions.size(0), device=these_predictions.device), where_most_certain].detach().cpu().numpy()) # Shape (B,)
+                                if args.dataset == 'sard' or args.out_dims == 2:
+                                    # For SARD/binary, predictions are (B, 2, T), want argmax over class dim for each tick for MCC later
+                                    # Or if using most_certain, it's (B,) based on that tick
+                                    all_preds_for_mcc_list.append(these_predictions.argmax(1)[torch.arange(these_predictions.size(0), device=these_predictions.device), where_most_certain].detach().cpu().numpy())
 
                             elif args.model == 'lstm':
                                 these_predictions, certainties, _ = model(inputs)
-                                loss, where_most_certain = image_classification_loss(these_predictions, certainties, targets, use_most_certain=True)
+                                loss_args_eval = {'predictions': these_predictions, 'certainties': certainties, 'targets': targets, 'use_most_certain': True}
+                                if args.dataset == 'sard':
+                                    loss_args_eval['class_weights'] = sard_class_weights
+                                loss, where_most_certain = image_classification_loss(**loss_args_eval)
                                 all_predictions_list.append(these_predictions.argmax(1).detach().cpu().numpy()) # Shape (B, T)
                                 all_predictions_most_certain_list.append(these_predictions.argmax(1)[torch.arange(these_predictions.size(0), device=these_predictions.device), where_most_certain].detach().cpu().numpy()) # Shape (B,)
+                                if args.dataset == 'sard' or args.out_dims == 2:
+                                     all_preds_for_mcc_list.append(these_predictions.argmax(1)[torch.arange(these_predictions.size(0), device=these_predictions.device), where_most_certain].detach().cpu().numpy())
 
                             elif args.model == 'ff':
                                 these_predictions = model(inputs)
-                                loss = nn.CrossEntropyLoss()(these_predictions, targets)
+                                if args.dataset == 'sard':
+                                    loss = nn.CrossEntropyLoss(weight=sard_class_weights)(these_predictions, targets)
+                                else:
+                                    loss = nn.CrossEntropyLoss()(these_predictions, targets)
                                 all_predictions_list.append(these_predictions.argmax(1).detach().cpu().numpy()) # Shape (B,)
+                                if args.dataset == 'sard' or args.out_dims == 2:
+                                    all_preds_for_mcc_list.append(these_predictions.argmax(1).detach().cpu().numpy())
 
                             all_losses.append(loss.item())
 
@@ -510,6 +665,16 @@ if __name__=='__main__':
                          current_train_accuracies = (all_targets == all_predictions).mean() # Shape scalar
                          train_accuracies.append(current_train_accuracies)
                 
+                    if args.dataset == 'sard' or args.out_dims == 2:
+                        all_preds_for_mcc = np.concatenate(all_preds_for_mcc_list)
+                        # all_targets is already (N,)
+                        tp = np.sum((all_preds_for_mcc == 1) & (all_targets == 1))
+                        tn = np.sum((all_preds_for_mcc == 0) & (all_targets == 0))
+                        fp = np.sum((all_preds_for_mcc == 1) & (all_targets == 0))
+                        fn = np.sum((all_preds_for_mcc == 0) & (all_targets == 1))
+                        current_train_mcc = calculate_mcc(tp, tn, fp, fn)
+                        train_mccs.append(current_train_mcc)
+
                 del these_predictions
                 
 
@@ -522,6 +687,7 @@ if __name__=='__main__':
                     all_predictions_list = []
                     all_predictions_most_certain_list = [] # Only for CTM/LSTM
                     all_losses = []
+                    all_preds_for_mcc_list_test = [] # For MCC on test set
 
                     with tqdm(total=len(loader), initial=0, leave=False, position=1, dynamic_ncols=True) as pbar_inner:
                        for inferi, (inputs, targets) in enumerate(loader):
@@ -532,20 +698,35 @@ if __name__=='__main__':
                             # Model-specific forward and loss for evaluation
                             if args.model == 'ctm':
                                 these_predictions, certainties, _ = model(inputs)
-                                loss, where_most_certain = image_classification_loss(these_predictions, certainties, targets, use_most_certain=True)
+                                loss_args_eval = {'predictions': these_predictions, 'certainties': certainties, 'targets': targets, 'use_most_certain': True}
+                                if args.dataset == 'sard':
+                                    loss_args_eval['class_weights'] = sard_class_weights
+                                loss, where_most_certain = image_classification_loss(**loss_args_eval)
                                 all_predictions_list.append(these_predictions.argmax(1).detach().cpu().numpy())
                                 all_predictions_most_certain_list.append(these_predictions.argmax(1)[torch.arange(these_predictions.size(0), device=these_predictions.device), where_most_certain].detach().cpu().numpy())
+                                if args.dataset == 'sard' or args.out_dims == 2:
+                                    all_preds_for_mcc_list_test.append(these_predictions.argmax(1)[torch.arange(these_predictions.size(0), device=these_predictions.device), where_most_certain].detach().cpu().numpy())
 
                             elif args.model == 'lstm':
                                 these_predictions, certainties, _ = model(inputs)
-                                loss, where_most_certain = image_classification_loss(these_predictions, certainties, targets, use_most_certain=True)
+                                loss_args_eval = {'predictions': these_predictions, 'certainties': certainties, 'targets': targets, 'use_most_certain': True}
+                                if args.dataset == 'sard':
+                                    loss_args_eval['class_weights'] = sard_class_weights
+                                loss, where_most_certain = image_classification_loss(**loss_args_eval)
                                 all_predictions_list.append(these_predictions.argmax(1).detach().cpu().numpy())
                                 all_predictions_most_certain_list.append(these_predictions.argmax(1)[torch.arange(these_predictions.size(0), device=these_predictions.device), where_most_certain].detach().cpu().numpy())
+                                if args.dataset == 'sard' or args.out_dims == 2:
+                                    all_preds_for_mcc_list_test.append(these_predictions.argmax(1)[torch.arange(these_predictions.size(0), device=these_predictions.device), where_most_certain].detach().cpu().numpy())
 
                             elif args.model == 'ff':
                                 these_predictions = model(inputs)
-                                loss = nn.CrossEntropyLoss()(these_predictions, targets)
+                                if args.dataset == 'sard':
+                                    loss = nn.CrossEntropyLoss(weight=sard_class_weights)(these_predictions, targets)
+                                else:
+                                    loss = nn.CrossEntropyLoss()(these_predictions, targets)
                                 all_predictions_list.append(these_predictions.argmax(1).detach().cpu().numpy())
+                                if args.dataset == 'sard' or args.out_dims == 2:
+                                    all_preds_for_mcc_list_test.append(these_predictions.argmax(1).detach().cpu().numpy())
 
                             all_losses.append(loss.item())
 
@@ -566,6 +747,15 @@ if __name__=='__main__':
                     else: # FF
                          current_test_accuracies = (all_targets == all_predictions).mean()
                          test_accuracies.append(current_test_accuracies)
+
+                    if args.dataset == 'sard' or args.out_dims == 2:
+                        all_preds_for_mcc_test = np.concatenate(all_preds_for_mcc_list_test)
+                        tp = np.sum((all_preds_for_mcc_test == 1) & (all_targets == 1))
+                        tn = np.sum((all_preds_for_mcc_test == 0) & (all_targets == 0))
+                        fp = np.sum((all_preds_for_mcc_test == 1) & (all_targets == 0))
+                        fn = np.sum((all_preds_for_mcc_test == 0) & (all_targets == 1))
+                        current_test_mcc = calculate_mcc(tp, tn, fp, fn)
+                        test_mccs.append(current_test_mcc)
 
                 # Plotting (conditional)
                 figacc = plt.figure(figsize=(10, 10))
@@ -616,38 +806,81 @@ if __name__=='__main__':
                 figloss.savefig(f'{args.log_dir}/losses.png', dpi=150)
                 plt.close(figloss)
 
+                # Plot MCC if SARD/binary
+                if args.dataset == 'sard' or args.out_dims == 2:
+                    figmcc = plt.figure(figsize=(10, 5))
+                    axmcc = figmcc.add_subplot(111)
+                    axmcc.plot(iters, train_mccs, 'b-', linewidth=1, alpha=0.8, label=f'Train MCC: {train_mccs[-1]:.4f}')
+                    axmcc.plot(iters, test_mccs, 'r-', linewidth=1, alpha=0.8, label=f'Test MCC: {test_mccs[-1]:.4f}')
+                    axmcc.legend(loc='lower right') # MCC can be negative, so lower right might be better
+                    axmcc.set_xlim([0, args.training_iterations])
+                    axmcc.set_ylim([-1, 1]) # MCC range is -1 to 1
+                    axmcc.set_title('Train/Test MCC')
+                    figmcc.tight_layout()
+                    figmcc.savefig(f'{args.log_dir}/mcc.png', dpi=150)
+                    plt.close(figmcc)
+
                 # Conditional Visualization (Only for CTM/LSTM)
                 if args.model in ['ctm', 'lstm']:
                     try: # For safety
-                        inputs_viz, targets_viz = next(iter(testloader)) # Get a fresh batch
-                        inputs_viz = inputs_viz.to(device)
-                        targets_viz = targets_viz.to(device)
+                        
+                        for i in range(3):
+                            # For SARD dataset, create a specific visualization sample to track file paths
+                            if args.dataset == 'sard':
+                                # Create a deterministic sample from test_data for visualization
+                                visualization_sample_index = i # Use first sample for consistency
+                                if visualization_sample_index < len(test_data):
+                                    inputs_viz_single, targets_viz_single = test_data[visualization_sample_index]
+                                    inputs_viz = inputs_viz_single.unsqueeze(0).to(device)  # Add batch dimension
+                                    targets_viz = torch.tensor([targets_viz_single]).to(device)
+                                    viz_dataset = test_data
+                                    viz_sample_index = visualization_sample_index
+                                else:
+                                    # Fallback to batch approach if sample index is out of range
+                                    inputs_viz, targets_viz = next(iter(testloader))
+                                    inputs_viz = inputs_viz.to(device)
+                                    targets_viz = targets_viz.to(device)
+                                    viz_dataset = None
+                                    viz_sample_index = None
+                            else:
+                                # For non-SARD datasets, use the existing batch approach
+                                inputs_viz, targets_viz = next(iter(testloader)) # Get a fresh batch
+                                inputs_viz = inputs_viz.to(device)
+                                targets_viz = targets_viz.to(device)
+                                viz_dataset = None
+                                viz_sample_index = None
+                                if i > 0:
+                                    continue
 
-                        pbar.set_description('Tracking: Processing test data for viz')
-                        predictions_viz, certainties_viz, _, pre_activations_viz, post_activations_viz, attention_tracking_viz = model(inputs_viz, track=True)
+                            pbar.set_description('Tracking: Processing test data for viz')
+                            predictions_viz, certainties_viz, _, pre_activations_viz, post_activations_viz, attention_tracking_viz = model(inputs_viz, track=True)
 
-                        att_shape = (model.kv_features.shape[2], model.kv_features.shape[3])
-                        attention_tracking_viz = attention_tracking_viz.reshape(
-                            attention_tracking_viz.shape[0], 
-                            attention_tracking_viz.shape[1], -1, att_shape[0], att_shape[1])
+                            att_shape = (model.kv_features.shape[2], model.kv_features.shape[3])
+                            attention_tracking_viz = attention_tracking_viz.reshape(
+                                attention_tracking_viz.shape[0], 
+                                attention_tracking_viz.shape[1], -1, att_shape[0], att_shape[1])
 
-                        pbar.set_description('Tracking: Neural dynamics plot')
-                        plot_neural_dynamics(post_activations_viz, 100, args.log_dir, axis_snap=True)
+                            pbar.set_description('Tracking: Neural dynamics plot')
+                            plot_neural_dynamics(post_activations_viz, 100, args.log_dir, axis_snap=True)
 
-                        imgi = 0 # Visualize the first image in the batch
-                        img_to_gif = np.moveaxis(np.clip(inputs_viz[imgi].detach().cpu().numpy()*np.array(dataset_std).reshape(len(dataset_std), 1, 1) + np.array(dataset_mean).reshape(len(dataset_mean), 1, 1), 0, 1), 0, -1)
+                            random_imgi = np.random.randint(0, inputs_viz.shape[0])
 
-                        pbar.set_description('Tracking: Producing attention gif')
-                        make_classification_gif(img_to_gif,
-                                                targets_viz[imgi].item(),
-                                                predictions_viz[imgi].detach().cpu().numpy(),
-                                                certainties_viz[imgi].detach().cpu().numpy(),
-                                                post_activations_viz[:,imgi], 
-                                                attention_tracking_viz[:,imgi], 
-                                                class_labels,
-                                                f'{args.log_dir}/{imgi}_attention.gif',
-                                                )
-                        del predictions_viz, certainties_viz, pre_activations_viz, post_activations_viz, attention_tracking_viz
+                            imgi = 0 # Visualize the first image in the batch
+                            img_to_gif = np.moveaxis(np.clip(inputs_viz[imgi].detach().cpu().numpy()*np.array(dataset_std).reshape(len(dataset_std), 1, 1) + np.array(dataset_mean).reshape(len(dataset_mean), 1, 1), 0, 1), 0, -1)
+                            
+                            pbar.set_description('Tracking: Producing attention gif')
+                            make_classification_gif(img_to_gif,
+                                                    targets_viz[imgi].item(),
+                                                    predictions_viz[imgi].detach().cpu().numpy(),
+                                                    certainties_viz[imgi].detach().cpu().numpy(),
+                                                    post_activations_viz[:,imgi], 
+                                                    attention_tracking_viz[:,imgi], 
+                                                    class_labels,
+                                                    f'{args.log_dir}/{i}_{imgi}_attention.gif',
+                                                    dataset=viz_dataset,
+                                                    sample_index=viz_sample_index,
+                                                    )
+                            del predictions_viz, certainties_viz, pre_activations_viz, post_activations_viz, attention_tracking_viz
                     except Exception as e:
                         print(f"Visualization failed for model {args.model}: {e}")
                     
@@ -684,6 +917,9 @@ if __name__=='__main__':
                 if args.model in ['ctm', 'lstm']:
                     checkpoint_data['train_accuracies_most_certain'] = train_accuracies_most_certain
                     checkpoint_data['test_accuracies_most_certain'] = test_accuracies_most_certain
+                if args.dataset == 'sard' or args.out_dims == 2: # Save MCC if SARD/binary
+                    checkpoint_data['train_mccs'] = train_mccs
+                    checkpoint_data['test_mccs'] = test_mccs
 
                 torch.save(checkpoint_data, f'{args.log_dir}/checkpoint.pt')
 

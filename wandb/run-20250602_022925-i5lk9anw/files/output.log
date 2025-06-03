@@ -1,0 +1,1929 @@
+Using device: cuda
+Froze base model parameters.
+Adapter parameters are trainable.
+Test set size: 1000
+Prepared a fixed sample from test_ds for qualitative checking. Prompt length: 453 tokens.
+Training set size: 68841
+Starting dataset preprocessing for training data...
+Training dataset preprocessing finished.
+Train DataLoader created with batch size 2. Number of batches: 34421
+Created DataLoader with batch size 2. Number of batches: 34421
+Starting training for 5 epochs...
+Generating sample for epoch 1 start...
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
+         
+
+
+```Python
+
+
+
+```Python
+      
+
+
+```Python
+         
+
+
+```Python
+import os
+
+
+
+```Python
+import os
+      
+
+
+```Python
+import os
+              
+
+
+```Python
+import os
+import pymongo
+
+
+
+
+```Python
+import os
+import pymongo
+
+    
+
+
+```Python
+import os
+import pymongo
+
+      
+
+
+```Python
+import os
+import pymongo
+
+        
+
+
+```Python
+import os
+import pymongo
+
+               
+
+
+```Python
+import os
+import pymongo
+
+                       
+
+
+```Python
+import os
+import pymongo
+
+                          
+
+
+```Python
+import os
+import pymongo
+
+                             
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+     
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+        
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+              
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+                
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+      
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+          
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+           
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+             
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+              
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+                 
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+                      
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+                          
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+      
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+          
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+           
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+             
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+              
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+                 
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+                      
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+                       
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+                           
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+   
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+       
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+          
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+               
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+      
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+         
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+           
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+                   
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+                      
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+                         
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+                               
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+                                     
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+         
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+              
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+           
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+             
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+                   
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+                      
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+                          
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+                              
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+                                    
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+                                         
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+                                              
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+                                                       
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+                    
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+                          
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+                            
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+               
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+                    
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+                         
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+                            
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+                                  
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+                                     
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+                                           
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                  
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                     
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                          
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                 
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                      
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                           
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                            
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                                
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                                   
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                                        
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                                            
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                                                 
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                                                      
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                                                           
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                                                            
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                                                              
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                                                                 
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                                                                      
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                                                                                               
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                if os.path.exists(file_path) and os.path.getmtime(file_path) > db.last_modified:
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                if os.path.exists(file_path) and os.path.getmtime(file_path) > db.last_modified:
+
+
+
+```Python
+import os
+import pymongo
+
+from .db import connect_to_db
+
+
+files_to_check = [
+    '/home/irvind/test.log',
+    '/home/irvind/test2.log'
+]
+
+
+def run_scanner():
+    _, db = connect_to_db(async=False)
+
+    while True:
+        try:
+            # Check if any log files have been modified
+            modified_files = []
+            for file_path in files_to_check:
+                if os.path.exists(file_path) and os.path.getmtime(file_path) > db.last_modified:
+                    modified

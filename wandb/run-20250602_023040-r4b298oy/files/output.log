@@ -1,0 +1,889 @@
+Using device: cuda
+Froze base model parameters.
+Adapter parameters are trainable.
+Test set size: 1000
+Prepared a fixed sample from test_ds for qualitative checking. Prompt length: 453 tokens.
+Training set size: 68841
+Starting dataset preprocessing for training data...
+Training dataset preprocessing finished.
+Train DataLoader created with batch size 2. Number of batches: 34421
+Created DataLoader with batch size 2. Number of batches: 34421
+Starting training for 5 epochs...
+Generating sample for epoch 1 start...
+
+
+
+
+
+# Refactor the TypeScript File
+
+Refactor the TypeScript file to replace all custom polyfill implementations for `String.prototype.startsWith`, `Array.prototype.includes`, `Object.values`, `Object.entries`, and `Object.assign` with their corresponding imports from the `core-js` library.
+
+## Code
+
+```typescript
+// src/polyfills/index.ts
+import 'core-js/fn/reflect/own-keys'
+
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function (
+
+
+
+# Refactor the TypeScript File
+
+Refactor the TypeScript file to replace all custom polyfill implementations for `String.prototype.startsWith`, `Array.prototype.includes`, `Object.values`, `Object.entries`, and `Object.assign` with their corresponding imports from the `core-js` library.
+
+## Code
+
+```typescript
+// src/polyfills/index.ts
+import 'core-js/fn/reflect/own-keys'
+
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function (search, pos) {
+    return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search
+  }
+}
+
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function (searchElement, ...args) {
+    let O = Object(this)
+    let len = parseInt(O.length, 10) || 0
+
+    if (len === 0) {
+      return false
+    }
+
+    let n = (args as any)[
+
+
+
+# Refactor the TypeScript File
+
+Refactor the TypeScript file to replace all custom polyfill implementations for `String.prototype.startsWith`, `Array.prototype.includes`, `Object.values`, `Object.entries`, and `Object.assign` with their corresponding imports from the `core-js` library.
+
+## Code
+
+```typescript
+// src/polyfills/index.ts
+import 'core-js/fn/reflect/own-keys'
+
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function (search, pos) {
+    return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search
+  }
+}
+
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function (searchElement, ...args) {
+    let O = Object(this)
+    let len = parseInt(O.length, 10) || 0
+
+    if (len === 0) {
+      return false
+    }
+
+    let n = (args as any)[1] || 0
+    let k
+
+    if (n >= 0) {
+      k = n
+    } else {
+      k = len + n
+
+      if (k < 0) {
+        k = 0
+      }
+    }
+
+    let currentElement
+
+    while (k < len) {
+      currentElement = O[k]
+
+      if (searchElement === currentElement || (searchElement !== searchElement && currentElement !== currentElement)) {
+        return true
+
+
+
+# Refactor the TypeScript File
+
+Refactor the TypeScript file to replace all custom polyfill implementations for `String.prototype.startsWith`, `Array.prototype.includes`, `Object.values`, `Object.entries`, and `Object.assign` with their corresponding imports from the `core-js` library.
+
+## Code
+
+```typescript
+// src/polyfills/index.ts
+import 'core-js/fn/reflect/own-keys'
+
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function (search, pos) {
+    return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search
+  }
+}
+
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function (searchElement, ...args) {
+    let O = Object(this)
+    let len = parseInt(O.length, 10) || 0
+
+    if (len === 0) {
+      return false
+    }
+
+    let n = (args as any)[1] || 0
+    let k
+
+    if (n >= 0) {
+      k = n
+    } else {
+      k = len + n
+
+      if (k < 0) {
+        k = 0
+      }
+    }
+
+    let currentElement
+
+    while (k < len) {
+      currentElement = O[k]
+
+      if (searchElement === currentElement || (searchElement !== searchElement && currentElement !== currentElement)) {
+        return true
+      }
+
+      k++
+    }
+
+    return false
+  }
+}
+
+if (!Object.values || !Object.entries || !Object.assign) {
+  const reduce = Function.bind.call(Function.call as any, Array.prototype.reduce)
+  const isEnumerable = Function.bind.call(Function.call as any, Object.prototype.propertyIsEnumerable)
+  const concat = Function.bind.call(Function.call as any, Array.prototype.concat)
+  const keys = Reflect.ownKeys
+
+  if (!Object.values) {
+    (Object.values
+
+
+
+# Refactor the TypeScript File
+
+Refactor the TypeScript file to replace all custom polyfill implementations for `String.prototype.startsWith`, `Array.prototype.includes`, `Object.values`, `Object.entries`, and `Object.assign` with their corresponding imports from the `core-js` library.
+
+## Code
+
+```typescript
+// src/polyfills/index.ts
+import 'core-js/fn/reflect/own-keys'
+
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function (search, pos) {
+    return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search
+  }
+}
+
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function (searchElement, ...args) {
+    let O = Object(this)
+    let len = parseInt(O.length, 10) || 0
+
+    if (len === 0) {
+      return false
+    }
+
+    let n = (args as any)[1] || 0
+    let k
+
+    if (n >= 0) {
+      k = n
+    } else {
+      k = len + n
+
+      if (k < 0) {
+        k = 0
+      }
+    }
+
+    let currentElement
+
+    while (k < len) {
+      currentElement = O[k]
+
+      if (searchElement === currentElement || (searchElement !== searchElement && currentElement !== currentElement)) {
+        return true
+      }
+
+      k++
+    }
+
+    return false
+  }
+}
+
+if (!Object.values || !Object.entries || !Object.assign) {
+  const reduce = Function.bind.call(Function.call as any, Array.prototype.reduce)
+  const isEnumerable = Function.bind.call(Function.call as any, Object.prototype.propertyIsEnumerable)
+  const concat = Function.bind.call(Function.call as any, Array.prototype.concat)
+  const keys = Reflect.ownKeys
+
+  if (!Object.values) {
+    (Object.values as any) = function values (O: any) {
+      return reduce(keys(O), (v: any, k: any) => concat(v, typeof k === 'string' && isEnumerable(O, k) ? [O[k]] : []), [])
+    }
+  }
+
+  if (!Object.entries) {
+    (Object.entries as any) = function entries (O: any) {
+      return reduce(keys(O), (e: any, k: any) => concat(e, typeof
+
+
+
+# Refactor the TypeScript File
+
+Refactor the TypeScript file to replace all custom polyfill implementations for `String.prototype.startsWith`, `Array.prototype.includes`, `Object.values`, `Object.entries`, and `Object.assign` with their corresponding imports from the `core-js` library.
+
+## Code
+
+```typescript
+// src/polyfills/index.ts
+import 'core-js/fn/reflect/own-keys'
+
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function (search, pos) {
+    return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search
+  }
+}
+
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function (searchElement, ...args) {
+    let O = Object(this)
+    let len = parseInt(O.length, 10) || 0
+
+    if (len === 0) {
+      return false
+    }
+
+    let n = (args as any)[1] || 0
+    let k
+
+    if (n >= 0) {
+      k = n
+    } else {
+      k = len + n
+
+      if (k < 0) {
+        k = 0
+      }
+    }
+
+    let currentElement
+
+    while (k < len) {
+      currentElement = O[k]
+
+      if (searchElement === currentElement || (searchElement !== searchElement && currentElement !== currentElement)) {
+        return true
+      }
+
+      k++
+    }
+
+    return false
+  }
+}
+
+if (!Object.values || !Object.entries || !Object.assign) {
+  const reduce = Function.bind.call(Function.call as any, Array.prototype.reduce)
+  const isEnumerable = Function.bind.call(Function.call as any, Object.prototype.propertyIsEnumerable)
+  const concat = Function.bind.call(Function.call as any, Array.prototype.concat)
+  const keys = Reflect.ownKeys
+
+  if (!Object.values) {
+    (Object.values as any) = function values (O: any) {
+      return reduce(keys(O), (v: any, k: any) => concat(v, typeof k === 'string' && isEnumerable(O, k) ? [O[k]] : []), [])
+    }
+  }
+
+  if (!Object.entries) {
+    (Object.entries as any) = function entries (O: any) {
+      return reduce(keys(O), (e: any, k: any) => concat(e, typeof k === 'string' && isEnumerable(O, k) ? [[k, O[k]]] : []), [])
+    }
+  }
+
+  if (!Object.assign) {
+    (Object.assign as any) = function assign (target: any, _varArgs: any) {
+      if (target == null) {
+        throw new TypeError('Cannot convert undefined or null to object')
+      }
+
+      const to = Object(target)
+
+      for (let index = 1; index < arguments.length
+
+
+
+# Refactor the TypeScript File
+
+Refactor the TypeScript file to replace all custom polyfill implementations for `String.prototype.startsWith`, `Array.prototype.includes`, `Object.values`, `Object.entries`, and `Object.assign` with their corresponding imports from the `core-js` library.
+
+## Code
+
+```typescript
+// src/polyfills/index.ts
+import 'core-js/fn/reflect/own-keys'
+
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function (search, pos) {
+    return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search
+  }
+}
+
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function (searchElement, ...args) {
+    let O = Object(this)
+    let len = parseInt(O.length, 10) || 0
+
+    if (len === 0) {
+      return false
+    }
+
+    let n = (args as any)[1] || 0
+    let k
+
+    if (n >= 0) {
+      k = n
+    } else {
+      k = len + n
+
+      if (k < 0) {
+        k = 0
+      }
+    }
+
+    let currentElement
+
+    while (k < len) {
+      currentElement = O[k]
+
+      if (searchElement === currentElement || (searchElement !== searchElement && currentElement !== currentElement)) {
+        return true
+      }
+
+      k++
+    }
+
+    return false
+  }
+}
+
+if (!Object.values || !Object.entries || !Object.assign) {
+  const reduce = Function.bind.call(Function.call as any, Array.prototype.reduce)
+  const isEnumerable = Function.bind.call(Function.call as any, Object.prototype.propertyIsEnumerable)
+  const concat = Function.bind.call(Function.call as any, Array.prototype.concat)
+  const keys = Reflect.ownKeys
+
+  if (!Object.values) {
+    (Object.values as any) = function values (O: any) {
+      return reduce(keys(O), (v: any, k: any) => concat(v, typeof k === 'string' && isEnumerable(O, k) ? [O[k]] : []), [])
+    }
+  }
+
+  if (!Object.entries) {
+    (Object.entries as any) = function entries (O: any) {
+      return reduce(keys(O), (e: any, k: any) => concat(e, typeof k === 'string' && isEnumerable(O, k) ? [[k, O[k]]] : []), [])
+    }
+  }
+
+  if (!Object.assign) {
+    (Object.assign as any) = function assign (target: any, _varArgs: any) {
+      if (target == null) {
+        throw new TypeError('Cannot convert undefined or null to object')
+      }
+
+      const to = Object(target)
+
+      for (let index = 1; index < arguments.length; index++) {
+        const nextSource = arguments[index]
+
+        if (nextSource != null) {
+          for (const nextKey in nextSource) {
+            if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+              to[nextKey] = nextSource[nextKey]
+            }
+          }
+        }
+      }
+      return to
+    }
+  }
+}
+```
+
+## Explanation
+
+- **String.prototype.startsWith**: This method is replaced with `String.prototype.includes` to ensure compatibility with modern
+
+
+
+# Refactor the TypeScript File
+
+Refactor the TypeScript file to replace all custom polyfill implementations for `String.prototype.startsWith`, `Array.prototype.includes`, `Object.values`, `Object.entries`, and `Object.assign` with their corresponding imports from the `core-js` library.
+
+## Code
+
+```typescript
+// src/polyfills/index.ts
+import 'core-js/fn/reflect/own-keys'
+
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function (search, pos) {
+    return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search
+  }
+}
+
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function (searchElement, ...args) {
+    let O = Object(this)
+    let len = parseInt(O.length, 10) || 0
+
+    if (len === 0) {
+      return false
+    }
+
+    let n = (args as any)[1] || 0
+    let k
+
+    if (n >= 0) {
+      k = n
+    } else {
+      k = len + n
+
+      if (k < 0) {
+        k = 0
+      }
+    }
+
+    let currentElement
+
+    while (k < len) {
+      currentElement = O[k]
+
+      if (searchElement === currentElement || (searchElement !== searchElement && currentElement !== currentElement)) {
+        return true
+      }
+
+      k++
+    }
+
+    return false
+  }
+}
+
+if (!Object.values || !Object.entries || !Object.assign) {
+  const reduce = Function.bind.call(Function.call as any, Array.prototype.reduce)
+  const isEnumerable = Function.bind.call(Function.call as any, Object.prototype.propertyIsEnumerable)
+  const concat = Function.bind.call(Function.call as any, Array.prototype.concat)
+  const keys = Reflect.ownKeys
+
+  if (!Object.values) {
+    (Object.values as any) = function values (O: any) {
+      return reduce(keys(O), (v: any, k: any) => concat(v, typeof k === 'string' && isEnumerable(O, k) ? [O[k]] : []), [])
+    }
+  }
+
+  if (!Object.entries) {
+    (Object.entries as any) = function entries (O: any) {
+      return reduce(keys(O), (e: any, k: any) => concat(e, typeof k === 'string' && isEnumerable(O, k) ? [[k, O[k]]] : []), [])
+    }
+  }
+
+  if (!Object.assign) {
+    (Object.assign as any) = function assign (target: any, _varArgs: any) {
+      if (target == null) {
+        throw new TypeError('Cannot convert undefined or null to object')
+      }
+
+      const to = Object(target)
+
+      for (let index = 1; index < arguments.length; index++) {
+        const nextSource = arguments[index]
+
+        if (nextSource != null) {
+          for (const nextKey in nextSource) {
+            if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+              to[nextKey] = nextSource[nextKey]
+            }
+          }
+        }
+      }
+      return to
+    }
+  }
+}
+```
+
+## Explanation
+
+- **String.prototype.startsWith**: This method is replaced with `String.prototype.includes` to ensure compatibility with modern JavaScript environments.
+- **Array.prototype.includes**: This method is replaced with `Array.prototype.entries` to maintain compatibility with modern JavaScript environments.
+- **Object.values**: This method is replaced with `Object.entries` to maintain compatibility with modern JavaScript environments.
+- **Object.entries**: This method is replaced with `Object.values` to maintain compatibility with modern JavaScript environments.
+- **Object.assign**: This method is replaced with `Object.values` to maintain compatibility with modern JavaScript environments.
+
+This refactoring ensures that the code
+
+--- Sample Generation ---
+[93mPrompt:
+Below is an instruction to modify a code file along with the code file. Apply these instructions and return the adapted code:
+
+Instruction:
+Refactor the TypeScript file to replace all custom polyfill implementations for String.prototype.startsWith, Array.prototype.includes, Object.values, Object.entries, and Object.assign with their corresponding imports from the 'core-js' library.
+
+Code:
+src/polyfills/index.ts
+```TypeScript
+/*eslint-disable */
+
+import 'core-js/fn/reflect/own-keys'
+
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function (search, pos) {
+    return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search
+  }
+}
+
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function (searchElement, ...args) {
+    let O = Object(this)
+    let len = parseInt(O.length, 10) || 0
+
+    if (len === 0) {
+      return false
+    }
+
+    let n = (args as any)[1] || 0
+    let k
+
+    if (n >= 0) {
+      k = n
+    } else {
+      k = len + n
+
+      if (k < 0) {
+        k = 0
+      }
+    }
+
+    let currentElement
+
+    while (k < len) {
+      currentElement = O[k]
+
+      if (searchElement === currentElement || (searchElement !== searchElement && currentElement !== currentElement)) {
+        return true
+      }
+
+      k++
+    }
+
+    return false
+  }
+}
+
+if (!Object.values || !Object.entries || !Object.assign) {
+  const reduce = Function.bind.call(Function.call as any, Array.prototype.reduce)
+  const isEnumerable = Function.bind.call(Function.call as any, Object.prototype.propertyIsEnumerable)
+  const concat = Function.bind.call(Function.call as any, Array.prototype.concat)
+  const keys = Reflect.ownKeys
+
+  if (!Object.values) {
+    (Object.values as any) = function values (O: any) {
+      return reduce(keys(O), (v: any, k: any) => concat(v, typeof k === 'string' && isEnumerable(O, k) ? [O[k]] : []), [])
+    }
+  }
+
+  if (!Object.entries) {
+    (Object.entries as any) = function entries (O: any) {
+      return reduce(keys(O), (e: any, k: any) => concat(e, typeof k === 'string' && isEnumerable(O, k) ? [[k, O[k]]] : []), [])
+    }
+  }
+
+  if (!Object.assign) {
+    (Object.assign as any) = function assign (target: any, _varArgs: any) {
+      if (target == null) {
+        throw new TypeError('Cannot convert undefined or null to object')
+      }
+
+      const to = Object(target)
+
+      for (let index = 1; index < arguments.length; index++) {
+        const nextSource = arguments[index]
+
+        if (nextSource != null) {
+          for (const nextKey in nextSource) {
+            if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+              to[nextKey] = nextSource[nextKey]
+            }
+          }
+        }
+      }
+      return to
+    }
+  }
+}
+
+
+
+Now return the full adjusted code, and just the code without any explanation.
+[0m
+[92mGold Solution: ```TypeScript
+/*eslint-disable */
+
+import 'core-js/fn/array/includes'
+import 'core-js/fn/object/assign'
+import 'core-js/fn/object/entries'
+import 'core-js/fn/object/values'
+import 'core-js/fn/string/starts-with'
+
+```[0m
+[95mModel Generated:
+
+
+# Refactor the TypeScript File
+
+Refactor the TypeScript file to replace all custom polyfill implementations for `String.prototype.startsWith`, `Array.prototype.includes`, `Object.values`, `Object.entries`, and `Object.assign` with their corresponding imports from the `core-js` library.
+
+## Code
+
+```typescript
+// src/polyfills/index.ts
+import 'core-js/fn/reflect/own-keys'
+
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function (search, pos) {
+    return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search
+  }
+}
+
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function (searchElement, ...args) {
+    let O = Object(this)
+    let len = parseInt(O.length, 10) || 0
+
+    if (len === 0) {
+      return false
+    }
+
+    let n = (args as any)[1] || 0
+    let k
+
+    if (n >= 0) {
+      k = n
+    } else {
+      k = len + n
+
+      if (k < 0) {
+        k = 0
+      }
+    }
+
+    let currentElement
+
+    while (k < len) {
+      currentElement = O[k]
+
+      if (searchElement === currentElement || (searchElement !== searchElement && currentElement !== currentElement)) {
+        return true
+      }
+
+      k++
+    }
+
+    return false
+  }
+}
+
+if (!Object.values || !Object.entries || !Object.assign) {
+  const reduce = Function.bind.call(Function.call as any, Array.prototype.reduce)
+  const isEnumerable = Function.bind.call(Function.call as any, Object.prototype.propertyIsEnumerable)
+  const concat = Function.bind.call(Function.call as any, Array.prototype.concat)
+  const keys = Reflect.ownKeys
+
+  if (!Object.values) {
+    (Object.values as any) = function values (O: any) {
+      return reduce(keys(O), (v: any, k: any) => concat(v, typeof k === 'string' && isEnumerable(O, k) ? [O[k]] : []), [])
+    }
+  }
+
+  if (!Object.entries) {
+    (Object.entries as any) = function entries (O: any) {
+      return reduce(keys(O), (e: any, k: any) => concat(e, typeof k === 'string' && isEnumerable(O, k) ? [[k, O[k]]] : []), [])
+    }
+  }
+
+  if (!Object.assign) {
+    (Object.assign as any) = function assign (target: any, _varArgs: any) {
+      if (target == null) {
+        throw new TypeError('Cannot convert undefined or null to object')
+      }
+
+      const to = Object(target)
+
+      for (let index = 1; index < arguments.length; index++) {
+        const nextSource = arguments[index]
+
+        if (nextSource != null) {
+          for (const nextKey in nextSource) {
+            if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+              to[nextKey] = nextSource[nextKey]
+            }
+          }
+        }
+      }
+      return to
+    }
+  }
+}
+```
+
+## Explanation
+
+- **String.prototype.startsWith**: This method is replaced with `String.prototype.includes` to ensure compatibility with modern JavaScript environments.
+- **Array.prototype.includes**: This method is replaced with `Array.prototype.entries` to maintain compatibility with modern JavaScript environments.
+- **Object.values**: This method is replaced with `Object.entries` to maintain compatibility with modern JavaScript environments.
+- **Object.entries**: This method is replaced with `Object.values` to maintain compatibility with modern JavaScript environments.
+- **Object.assign**: This method is replaced with `Object.values` to maintain compatibility with modern JavaScript environments.
+
+This refactoring ensures that the code is compatible with modern JavaScript environments and leverages the `core-js` library for polyfills.[0m
+--- End Sample Generation ---
+
+Saved latest sample generation to generation_sample.json
+Saved detailed sample generation to generation_logs\log_epoch0_runrun_Qwen_Adapter_0.5B_Instruct_1748842239_time20250602-023741.json
+Epoch 1, Batch 1/34421, Loss: 1.5888, Batch Time: 44.09s, Avg Batch Time: 44.09s
+Epoch 1, Batch 2/34421, Loss: 1.6704, Batch Time: 8.59s, Avg Batch Time: 26.34s
+Epoch 1, Batch 3/34421, Loss: 1.1491, Batch Time: 7.08s, Avg Batch Time: 19.92s
+Epoch 1, Batch 4/34421, Loss: 1.6051, Batch Time: 1.63s, Avg Batch Time: 15.35s
+Epoch 1, Batch 5/34421, Loss: 0.9959, Batch Time: 8.95s, Avg Batch Time: 14.07s
+Epoch 1, Batch 6/34421, Loss: 1.2240, Batch Time: 5.27s, Avg Batch Time: 12.60s
+Epoch 1, Batch 7/34421, Loss: 1.2746, Batch Time: 6.09s, Avg Batch Time: 11.67s
+Epoch 1, Batch 8/34421, Loss: 1.0844, Batch Time: 7.31s, Avg Batch Time: 11.13s
+Epoch 1, Batch 9/34421, Loss: 1.3851, Batch Time: 5.31s, Avg Batch Time: 10.48s
+Epoch 1, Batch 10/34421, Loss: 1.2484, Batch Time: 6.06s, Avg Batch Time: 10.04s
+Epoch 1, Batch 11/34421, Loss: 1.2246, Batch Time: 4.07s, Avg Batch Time: 9.50s
+Epoch 1, Batch 12/34421, Loss: 1.3086, Batch Time: 2.53s, Avg Batch Time: 8.92s
+Epoch 1, Batch 13/34421, Loss: 1.3313, Batch Time: 4.33s, Avg Batch Time: 8.56s
+Epoch 1, Batch 14/34421, Loss: 1.2515, Batch Time: 4.10s, Avg Batch Time: 8.24s
+Epoch 1, Batch 15/34421, Loss: 1.2399, Batch Time: 4.55s, Avg Batch Time: 8.00s
+Epoch 1, Batch 16/34421, Loss: 1.3551, Batch Time: 2.33s, Avg Batch Time: 7.64s
+Epoch 1, Batch 17/34421, Loss: 0.8367, Batch Time: 11.15s, Avg Batch Time: 7.85s
+Epoch 1, Batch 18/34421, Loss: 1.1309, Batch Time: 7.24s, Avg Batch Time: 7.82s
+Epoch 1, Batch 19/34421, Loss: 1.1600, Batch Time: 8.38s, Avg Batch Time: 7.85s
+Epoch 1, Batch 20/34421, Loss: 0.9480, Batch Time: 6.93s, Avg Batch Time: 7.80s
+Epoch 1, Batch 21/34421, Loss: 0.7471, Batch Time: 7.78s, Avg Batch Time: 7.80s
+Epoch 1, Batch 22/34421, Loss: 1.2934, Batch Time: 12.59s, Avg Batch Time: 8.02s
+Epoch 1, Batch 23/34421, Loss: 1.0721, Batch Time: 11.56s, Avg Batch Time: 8.17s
+Epoch 1, Batch 24/34421, Loss: 1.3526, Batch Time: 8.17s, Avg Batch Time: 8.17s
+Epoch 1, Batch 25/34421, Loss: 1.0357, Batch Time: 10.17s, Avg Batch Time: 8.25s
+Epoch 1, Batch 26/34421, Loss: 1.0302, Batch Time: 7.98s, Avg Batch Time: 8.24s
+Epoch 1, Batch 27/34421, Loss: 1.1648, Batch Time: 9.33s, Avg Batch Time: 8.28s
+Epoch 1, Batch 28/34421, Loss: 1.1392, Batch Time: 8.96s, Avg Batch Time: 8.30s
+Epoch 1, Batch 29/34421, Loss: 0.8477, Batch Time: 7.30s, Avg Batch Time: 8.27s
+Epoch 1, Batch 30/34421, Loss: 1.0178, Batch Time: 9.22s, Avg Batch Time: 8.30s
+Epoch 1, Batch 31/34421, Loss: 1.2044, Batch Time: 7.99s, Avg Batch Time: 8.29s
+Epoch 1, Batch 32/34421, Loss: 1.2054, Batch Time: 8.96s, Avg Batch Time: 8.31s
+Epoch 1, Batch 33/34421, Loss: 1.0579, Batch Time: 12.31s, Avg Batch Time: 8.43s
+Epoch 1, Batch 34/34421, Loss: 1.0957, Batch Time: 8.13s, Avg Batch Time: 8.42s
+Epoch 1, Batch 35/34421, Loss: 0.9604, Batch Time: 11.12s, Avg Batch Time: 8.50s
+Epoch 1, Batch 36/34421, Loss: 1.1205, Batch Time: 13.68s, Avg Batch Time: 8.65s
+Epoch 1, Batch 37/34421, Loss: 1.2183, Batch Time: 6.06s, Avg Batch Time: 8.58s
+Epoch 1, Batch 38/34421, Loss: 1.1379, Batch Time: 8.80s, Avg Batch Time: 8.58s
+Epoch 1, Batch 39/34421, Loss: 1.0306, Batch Time: 6.15s, Avg Batch Time: 8.52s
+Epoch 1, Batch 40/34421, Loss: 1.2627, Batch Time: 4.08s, Avg Batch Time: 8.41s
+Epoch 1, Batch 41/34421, Loss: 1.2795, Batch Time: 5.22s, Avg Batch Time: 8.33s
+Epoch 1, Batch 42/34421, Loss: 0.9294, Batch Time: 6.40s, Avg Batch Time: 8.28s
+Epoch 1, Batch 43/34421, Loss: 0.7268, Batch Time: 6.38s, Avg Batch Time: 8.24s
+Epoch 1, Batch 44/34421, Loss: 1.1421, Batch Time: 3.71s, Avg Batch Time: 8.14s
+Epoch 1, Batch 45/34421, Loss: 1.3590, Batch Time: 5.31s, Avg Batch Time: 8.07s
+Epoch 1, Batch 46/34421, Loss: 1.0128, Batch Time: 5.01s, Avg Batch Time: 8.01s
+Epoch 1, Batch 47/34421, Loss: 1.2785, Batch Time: 5.26s, Avg Batch Time: 7.95s
+Epoch 1, Batch 48/34421, Loss: 1.0369, Batch Time: 12.88s, Avg Batch Time: 8.05s
+Epoch 1, Batch 49/34421, Loss: 1.0482, Batch Time: 8.04s, Avg Batch Time: 8.05s
+Epoch 1, Batch 50/34421, Loss: 1.2981, Batch Time: 6.61s, Avg Batch Time: 8.02s
+Generating sample for epoch 1, batch 50...
+```
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript`
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript`
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript`
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript`
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript`
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript`
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript`
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript`
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript`
+```JavaScript
+Now return the full adjusted code, and just the code without any explanation.
+```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript```JavaScript`
+Error in sys.excepthook:
+Traceback (most recent call last):
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\sdk\lib\exit_hooks.py", line 52, in exc_handler
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\traceback.py", line 124, in print_exception
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\traceback.py", line 733, in __init__
+    self.stack = StackSummary._extract_from_extended_frame_gen(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\traceback.py", line 434, in _extract_from_extended_frame_gen
+    linecache.checkcache(filename)
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\linecache.py", line 72, in checkcache
+    stat = os.stat(fullname)
+           ^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
+
+Original exception was:
+Traceback (most recent call last):
+  File "C:\Users\Alexandre\Documents\GitHub\continuous-thought-machines\tasks\adapter_llm\train.py", line 374, in <module>
+    generate_and_log_sample(model, adapter, tokenizer, device, epoch=epoch, run_id=run_id, epoch_completion=epoch_completion, current_loss=loss.item())
+  File "C:\Users\Alexandre\Documents\GitHub\continuous-thought-machines\tasks\adapter_llm\train.py", line 224, in generate_and_log_sample
+    if next_token_id.item() == tokenizer.eos_token_id:
+       ^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

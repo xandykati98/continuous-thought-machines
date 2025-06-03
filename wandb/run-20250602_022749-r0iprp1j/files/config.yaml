@@ -1,0 +1,63 @@
+_wandb:
+    value:
+        cli_version: 0.19.11
+        m: []
+        python_version: 3.12.4
+        t:
+            "1":
+                - 1
+                - 2
+                - 3
+                - 5
+                - 11
+                - 12
+                - 41
+                - 49
+                - 51
+                - 53
+                - 55
+                - 71
+                - 105
+            "2":
+                - 1
+                - 2
+                - 3
+                - 5
+                - 11
+                - 12
+                - 41
+                - 49
+                - 51
+                - 53
+                - 55
+                - 71
+                - 105
+            "3":
+                - 13
+                - 16
+                - 23
+                - 55
+            "4": 3.12.4
+            "5": 0.19.11
+            "6": 4.51.3
+            "8":
+                - 3
+                - 5
+            "12": 0.19.11
+            "13": windows-amd64
+adapter_bottleneck:
+    value: 1024
+batch_size:
+    value: 2
+dataset:
+    value: PrimeIntellect/real-world-swe-problems
+epochs:
+    value: 5
+learning_rate:
+    value: 0.0001
+model_name:
+    value: Qwen/Qwen2.5-Coder-0.5B-Instruct
+run_id:
+    value: run_Qwen_Adapter_0.5B_Instruct_1748842068
+wandb_api_key:
+    value: 5c0d2d6b1fcad21af4e0cc3894c119285c4ddae5

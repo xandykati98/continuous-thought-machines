@@ -1,0 +1,386 @@
+Using device: cuda
+Froze base model parameters.
+Adapter parameters are trainable.
+Test set size: 1000
+Prepared a fixed sample from test_ds for qualitative checking. Prompt length: 453 tokens.
+Training set size: 68841
+Starting dataset preprocessing for training data...
+Training dataset preprocessing finished.
+Train DataLoader created with batch size 2. Number of batches: 34421
+Created DataLoader with batch size 2. Number of batches: 34421
+Starting training for 5 epochs...
+Generating sample for epoch 1 start...
+
+--- Sample Generation ---
+[93mPrompt:
+Below is an instruction to modify a code file along with the code file. Apply these instructions and return the adapted code:
+
+Instruction:
+Expand the test suite for the ApplicationsController by adding functional tests. Include tests for both anonymous and authenticated users, covering actions like 'GET new' and 'POST create'. Ensure to test template rendering and application creation logic, using FactoryGirl for user and application data setup.
+
+Code:
+spec/controllers/applications_controller_spec.rb
+```Ruby
+require 'spec_helper'
+
+describe ApplicationsController do
+
+end
+
+
+
+Now return the full adjusted code, and just the code without any explanation.
+[0m
+[92mGold Solution: ```Ruby
+require 'spec_helper'
+
+describe ApplicationsController do
+  render_views
+
+  context 'as an anonymous user' do
+    describe 'GET new' do
+      it 'renders the "sign_in" template' do
+        get :new
+        expect(response).to render_template 'sign_in'
+      end
+    end
+  end
+
+  context 'as an authenticated user' do
+    let(:user) { FactoryGirl.build(:user) }
+
+    before do
+      controller.stub(authenticate_user!: true)
+      controller.stub(signed_in?: true)
+      controller.stub(current_user: user)
+    end
+
+    describe 'GET new' do
+      it 'renders the "new" template' do
+        get :new
+        expect(response).to render_template 'new'
+        expect(assigns(:application_form).student_name).to eq user.name
+        expect(assigns(:application_form).student_email).to eq user.email
+      end
+    end
+
+    describe 'POST create' do
+      before { user.save}
+
+      it 'fails to create invalid record' do
+        expect do
+          post :create, application: { student_name: nil }
+        end.not_to change { user.applications.count }
+        expect(flash.now[:alert]).to be_present
+        expect(response).to render_template 'new'
+      end
+
+      it 'creates a new application' do
+        allow_any_instance_of(ApplicationForm).
+          to receive(:valid?).and_return(true)
+        valid_attributes = FactoryGirl.attributes_for(:application).merge(
+          student_name: user.name,
+          student_email: user.email
+        )
+        expect do
+          post :create, application: valid_attributes
+          puts assigns(:application_form).errors.full_messages
+        end.to change { user.applications.count }.by(1)
+        expect(response).to render_template 'create'
+      end
+    end
+  end
+
+end
+
+```[0m
+[95mModel Generated:
+
+
+[0m
+--- End Sample Generation ---
+
+Saved latest sample generation to generation_sample.json
+Saved detailed sample generation to generation_logs\log_epoch0_runrun_Qwen_Adapter_0.5B_Instruct_1748841176_time20250602-021300.json
+Epoch 1, Batch 1/34421, Loss: 1.5606, Batch Time: 0.59s, Avg Batch Time: 0.59s
+Epoch 1, Batch 2/34421, Loss: 1.2039, Batch Time: 3.14s, Avg Batch Time: 1.86s
+Epoch 1, Batch 3/34421, Loss: 1.3781, Batch Time: 3.50s, Avg Batch Time: 2.41s
+Epoch 1, Batch 4/34421, Loss: 1.4128, Batch Time: 3.05s, Avg Batch Time: 2.57s
+Epoch 1, Batch 5/34421, Loss: 1.3303, Batch Time: 2.08s, Avg Batch Time: 2.47s
+Epoch 1, Batch 6/34421, Loss: 1.8977, Batch Time: 0.39s, Avg Batch Time: 2.13s
+Epoch 1, Batch 7/34421, Loss: 1.2756, Batch Time: 6.50s, Avg Batch Time: 2.75s
+Epoch 1, Batch 8/34421, Loss: 1.4939, Batch Time: 2.84s, Avg Batch Time: 2.76s
+Epoch 1, Batch 9/34421, Loss: 1.1836, Batch Time: 7.86s, Avg Batch Time: 3.33s
+Epoch 1, Batch 10/34421, Loss: 1.2799, Batch Time: 2.99s, Avg Batch Time: 3.29s
+Epoch 1, Batch 11/34421, Loss: 1.6923, Batch Time: 0.59s, Avg Batch Time: 3.05s
+Epoch 1, Batch 12/34421, Loss: 1.8720, Batch Time: 0.84s, Avg Batch Time: 2.86s
+Epoch 1, Batch 13/34421, Loss: 1.3566, Batch Time: 0.72s, Avg Batch Time: 2.70s
+Epoch 1, Batch 14/34421, Loss: 1.2102, Batch Time: 3.34s, Avg Batch Time: 2.75s
+Epoch 1, Batch 15/34421, Loss: 1.1204, Batch Time: 3.52s, Avg Batch Time: 2.80s
+Epoch 1, Batch 16/34421, Loss: 1.4627, Batch Time: 1.91s, Avg Batch Time: 2.74s
+Epoch 1, Batch 17/34421, Loss: 1.0418, Batch Time: 3.71s, Avg Batch Time: 2.80s
+Epoch 1, Batch 18/34421, Loss: 1.1529, Batch Time: 1.07s, Avg Batch Time: 2.70s
+Epoch 1, Batch 19/34421, Loss: 1.1475, Batch Time: 3.06s, Avg Batch Time: 2.72s
+Epoch 1, Batch 20/34421, Loss: 1.4418, Batch Time: 3.15s, Avg Batch Time: 2.74s
+Epoch 1, Batch 21/34421, Loss: 0.8748, Batch Time: 5.29s, Avg Batch Time: 2.86s
+Epoch 1, Batch 22/34421, Loss: 1.2301, Batch Time: 1.08s, Avg Batch Time: 2.78s
+Epoch 1, Batch 23/34421, Loss: 1.0356, Batch Time: 2.47s, Avg Batch Time: 2.77s
+Epoch 1, Batch 24/34421, Loss: 1.4247, Batch Time: 2.13s, Avg Batch Time: 2.74s
+Epoch 1, Batch 25/34421, Loss: 1.0157, Batch Time: 2.72s, Avg Batch Time: 2.74s
+Epoch 1, Batch 26/34421, Loss: 1.0443, Batch Time: 1.18s, Avg Batch Time: 2.68s
+Epoch 1, Batch 27/34421, Loss: 1.0901, Batch Time: 1.40s, Avg Batch Time: 2.63s
+Epoch 1, Batch 28/34421, Loss: 1.2830, Batch Time: 3.48s, Avg Batch Time: 2.66s
+Epoch 1, Batch 29/34421, Loss: 0.9537, Batch Time: 2.12s, Avg Batch Time: 2.65s
+Epoch 1, Batch 30/34421, Loss: 0.9532, Batch Time: 1.16s, Avg Batch Time: 2.60s
+Epoch 1, Batch 31/34421, Loss: 0.7687, Batch Time: 5.05s, Avg Batch Time: 2.68s
+Epoch 1, Batch 32/34421, Loss: 0.9187, Batch Time: 0.81s, Avg Batch Time: 2.62s
+Epoch 1, Batch 33/34421, Loss: 1.0778, Batch Time: 1.48s, Avg Batch Time: 2.58s
+Epoch 1, Batch 34/34421, Loss: 0.8466, Batch Time: 3.44s, Avg Batch Time: 2.61s
+Epoch 1, Batch 35/34421, Loss: 0.9379, Batch Time: 0.66s, Avg Batch Time: 2.55s
+Epoch 1, Batch 36/34421, Loss: 0.6974, Batch Time: 3.22s, Avg Batch Time: 2.57s
+Epoch 1, Batch 37/34421, Loss: 1.1921, Batch Time: 0.79s, Avg Batch Time: 2.52s
+Epoch 1, Batch 38/34421, Loss: 0.7383, Batch Time: 1.81s, Avg Batch Time: 2.50s
+Epoch 1, Batch 39/34421, Loss: 1.0001, Batch Time: 1.37s, Avg Batch Time: 2.47s
+Epoch 1, Batch 40/34421, Loss: 0.9927, Batch Time: 0.48s, Avg Batch Time: 2.43s
+Epoch 1, Batch 41/34421, Loss: 0.9636, Batch Time: 2.01s, Avg Batch Time: 2.42s
+Epoch 1, Batch 42/34421, Loss: 0.8979, Batch Time: 3.56s, Avg Batch Time: 2.44s
+Epoch 1, Batch 43/34421, Loss: 1.1043, Batch Time: 0.71s, Avg Batch Time: 2.40s
+Epoch 1, Batch 44/34421, Loss: 0.7700, Batch Time: 1.59s, Avg Batch Time: 2.38s
+Epoch 1, Batch 45/34421, Loss: 1.2592, Batch Time: 1.06s, Avg Batch Time: 2.35s
+Epoch 1, Batch 46/34421, Loss: 0.8837, Batch Time: 2.24s, Avg Batch Time: 2.35s
+Epoch 1, Batch 47/34421, Loss: 1.0251, Batch Time: 2.20s, Avg Batch Time: 2.35s
+Epoch 1, Batch 48/34421, Loss: 1.0338, Batch Time: 2.73s, Avg Batch Time: 2.36s
+Epoch 1, Batch 49/34421, Loss: 1.0531, Batch Time: 2.32s, Avg Batch Time: 2.36s
+Epoch 1, Batch 50/34421, Loss: 1.3985, Batch Time: 0.56s, Avg Batch Time: 2.32s
+Generating sample for epoch 1, batch 50...
+
+--- Sample Generation ---
+[93mPrompt:
+Below is an instruction to modify a code file along with the code file. Apply these instructions and return the adapted code:
+
+Instruction:
+Transform the basic console application into an OpenTK application that renders a triangle. Incorporate OpenTK libraries and create a Game class inheriting from GameWindow. Implement methods for loading, resizing, updating frames, and rendering a colored triangle. Modify the Main method to instantiate and run the Game class.
+
+Code:
+OpenTkApp/Program.cs
+```C#
+﻿using System;
+
+namespace OpenTkApp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Hello World!");
+        }
+    }
+}
+
+
+
+Now return the full adjusted code, and just the code without any explanation.
+[0m
+[92mGold Solution: ```C#
+﻿using System;
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Input;
+
+namespace OpenTkApp
+{
+    class Game : GameWindow
+    {
+        public Game()
+            : base(800, 600, GraphicsMode.Default, "OpenTK Quick Start Sample")
+        {
+            VSync = VSyncMode.On;
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            GL.ClearColor(0.1f, 0.2f, 0.5f, 0.0f);
+            GL.Enable(EnableCap.DepthTest);
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+
+            GL.Viewport(ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width, ClientRectangle.Height);
+
+            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView((float)Math.PI / 4, Width / (float)Height, 1.0f, 64.0f);
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadMatrix(ref projection);
+        }
+
+        protected override void OnUpdateFrame(FrameEventArgs e)
+        {
+            base.OnUpdateFrame(e);
+
+            if (Keyboard[Key.Escape])
+                Exit();
+        }
+
+        protected override void OnRenderFrame(FrameEventArgs e)
+        {
+            base.OnRenderFrame(e);
+
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            Matrix4 modelview = Matrix4.LookAt(Vector3.Zero, Vector3.UnitZ, Vector3.UnitY);
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadMatrix(ref modelview);
+
+            GL.Begin(BeginMode.Triangles);
+
+            GL.Color3(1.0f, 1.0f, 0.0f); GL.Vertex3(-1.0f, -1.0f, 4.0f);
+            GL.Color3(1.0f, 0.0f, 0.0f); GL.Vertex3(1.0f, -1.0f, 4.0f);
+            GL.Color3(0.2f, 0.9f, 1.0f); GL.Vertex3(0.0f, 1.0f, 4.0f);
+
+            GL.End();
+
+            SwapBuffers();
+        }
+    }
+
+    class Program
+    {
+        [STAThread]
+        static void Main(string[] args)
+        {
+            using (Game game = new Game())
+            {
+                game.Run(30.0);
+            }
+        }
+    }
+}
+
+```[0m
+[95mModel Generated: ``````[0m
+--- End Sample Generation ---
+
+Saved latest sample generation to generation_sample.json
+Saved detailed sample generation to generation_logs\log_epoch0_runrun_Qwen_Adapter_0.5B_Instruct_1748841176_time20250602-021456.json
+Epoch 1, Batch 51/34421, Loss: 0.6294, Batch Time: 0.96s, Avg Batch Time: 2.29s
+Epoch 1, Batch 52/34421, Loss: 1.3603, Batch Time: 1.34s, Avg Batch Time: 2.27s
+Epoch 1, Batch 53/34421, Loss: 1.0262, Batch Time: 1.28s, Avg Batch Time: 2.26s
+Epoch 1, Batch 54/34421, Loss: 1.0097, Batch Time: 5.26s, Avg Batch Time: 2.31s
+Epoch 1, Batch 55/34421, Loss: 1.2143, Batch Time: 3.02s, Avg Batch Time: 2.32s
+Epoch 1, Batch 56/34421, Loss: 1.1039, Batch Time: 1.37s, Avg Batch Time: 2.31s
+Epoch 1, Batch 57/34421, Loss: 1.3471, Batch Time: 2.22s, Avg Batch Time: 2.31s
+Epoch 1, Batch 58/34421, Loss: 0.9400, Batch Time: 1.37s, Avg Batch Time: 2.29s
+Epoch 1, Batch 59/34421, Loss: 0.9227, Batch Time: 6.93s, Avg Batch Time: 2.37s
+Epoch 1, Batch 60/34421, Loss: 0.8045, Batch Time: 0.80s, Avg Batch Time: 2.34s
+Epoch 1, Batch 61/34421, Loss: 0.7630, Batch Time: 3.87s, Avg Batch Time: 2.37s
+Epoch 1, Batch 62/34421, Loss: 1.0559, Batch Time: 3.22s, Avg Batch Time: 2.38s
+Epoch 1, Batch 63/34421, Loss: 1.2107, Batch Time: 1.34s, Avg Batch Time: 2.36s
+Epoch 1, Batch 64/34421, Loss: 1.1506, Batch Time: 2.39s, Avg Batch Time: 2.37s
+Epoch 1, Batch 65/34421, Loss: 0.9567, Batch Time: 0.80s, Avg Batch Time: 2.34s
+Epoch 1, Batch 66/34421, Loss: 1.3112, Batch Time: 2.19s, Avg Batch Time: 2.34s
+Epoch 1, Batch 67/34421, Loss: 1.0825, Batch Time: 5.58s, Avg Batch Time: 2.39s
+Epoch 1, Batch 68/34421, Loss: 0.9485, Batch Time: 0.70s, Avg Batch Time: 2.36s
+Epoch 1, Batch 69/34421, Loss: 0.6539, Batch Time: 2.49s, Avg Batch Time: 2.36s
+Epoch 1, Batch 70/34421, Loss: 1.0140, Batch Time: 2.39s, Avg Batch Time: 2.36s
+Epoch 1, Batch 71/34421, Loss: 0.9784, Batch Time: 0.83s, Avg Batch Time: 2.34s
+Epoch 1, Batch 72/34421, Loss: 0.8643, Batch Time: 2.76s, Avg Batch Time: 2.35s
+Epoch 1, Batch 73/34421, Loss: 1.3403, Batch Time: 0.88s, Avg Batch Time: 2.33s
+Epoch 1, Batch 74/34421, Loss: 1.0542, Batch Time: 1.41s, Avg Batch Time: 2.32s
+Epoch 1, Batch 75/34421, Loss: 0.8640, Batch Time: 2.54s, Avg Batch Time: 2.32s
+Epoch 1, Batch 76/34421, Loss: 1.2254, Batch Time: 1.88s, Avg Batch Time: 2.31s
+Epoch 1, Batch 77/34421, Loss: 0.7767, Batch Time: 1.61s, Avg Batch Time: 2.30s
+Epoch 1, Batch 78/34421, Loss: 0.9395, Batch Time: 2.21s, Avg Batch Time: 2.30s
+Epoch 1, Batch 79/34421, Loss: 0.8333, Batch Time: 1.42s, Avg Batch Time: 2.29s
+Epoch 1, Batch 80/34421, Loss: 0.9502, Batch Time: 4.67s, Avg Batch Time: 2.32s
+Epoch 1, Batch 81/34421, Loss: 0.8903, Batch Time: 0.64s, Avg Batch Time: 2.30s
+Epoch 1, Batch 82/34421, Loss: 0.9967, Batch Time: 3.14s, Avg Batch Time: 2.31s
+Epoch 1, Batch 83/34421, Loss: 1.0135, Batch Time: 1.84s, Avg Batch Time: 2.31s
+Epoch 1, Batch 84/34421, Loss: 1.0799, Batch Time: 1.25s, Avg Batch Time: 2.29s
+Epoch 1, Batch 85/34421, Loss: 0.8806, Batch Time: 0.94s, Avg Batch Time: 2.28s
+Epoch 1, Batch 86/34421, Loss: 0.9490, Batch Time: 5.23s, Avg Batch Time: 2.31s
+Epoch 1, Batch 87/34421, Loss: 0.8970, Batch Time: 0.78s, Avg Batch Time: 2.29s
+Epoch 1, Batch 88/34421, Loss: 0.9000, Batch Time: 2.05s, Avg Batch Time: 2.29s
+Epoch 1, Batch 89/34421, Loss: 0.9669, Batch Time: 4.34s, Avg Batch Time: 2.31s
+Epoch 1, Batch 90/34421, Loss: 1.0312, Batch Time: 1.75s, Avg Batch Time: 2.31s
+Epoch 1, Batch 91/34421, Loss: 0.9043, Batch Time: 3.41s, Avg Batch Time: 2.32s
+Epoch 1, Batch 92/34421, Loss: 0.6997, Batch Time: 0.71s, Avg Batch Time: 2.30s
+Epoch 1, Batch 93/34421, Loss: 0.9507, Batch Time: 0.87s, Avg Batch Time: 2.29s
+Epoch 1, Batch 94/34421, Loss: 1.1506, Batch Time: 2.14s, Avg Batch Time: 2.29s
+Epoch 1, Batch 95/34421, Loss: 0.9898, Batch Time: 0.94s, Avg Batch Time: 2.27s
+Epoch 1, Batch 96/34421, Loss: 0.6290, Batch Time: 1.83s, Avg Batch Time: 2.27s
+Epoch 1, Batch 97/34421, Loss: 0.7838, Batch Time: 1.07s, Avg Batch Time: 2.25s
+Epoch 1, Batch 98/34421, Loss: 1.0576, Batch Time: 2.09s, Avg Batch Time: 2.25s
+Epoch 1, Batch 99/34421, Loss: 0.8335, Batch Time: 4.22s, Avg Batch Time: 2.27s
+Epoch 1, Batch 100/34421, Loss: 0.7280, Batch Time: 0.75s, Avg Batch Time: 2.26s
+Generating sample for epoch 1, batch 100...
+Traceback (most recent call last):
+  File "C:\Users\Alexandre\Documents\GitHub\continuous-thought-machines\tasks\adapter_llm\train.py", line 369, in <module>
+    # Generate sample every 50 batches (or as configured)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\Documents\GitHub\continuous-thought-machines\tasks\adapter_llm\train.py", line 219, in generate_and_log_sample
+    print(f"\r{tokenizer.decode(generated_ids[0][prompt_ids.shape[1]:], skip_special_tokens=True)}", end="", flush=True)
+       ^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
+Exception ignored in atexit callback: <function _start_and_connect_service.<locals>.teardown_atexit at 0x000001E35096CA40>
+Traceback (most recent call last):
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\sdk\lib\service_connection.py", line 94, in teardown_atexit
+    conn.teardown(hooks.exit_code)
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\sdk\lib\service_connection.py", line 226, in teardown
+    self._router.join()
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\site-packages\wandb\sdk\interface\router.py", line 75, in join
+    self._thread.join()
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1147, in join
+    self._wait_for_tstate_lock()
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1167, in _wait_for_tstate_lock
+    if lock.acquire(block, timeout):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt:
+Exception ignored in atexit callback: <function dump_compile_times at 0x000001E35E25EAC0>
+Traceback (most recent call last):
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\site-packages\torch\_dynamo\utils.py", line 399, in dump_compile_times
+    log.info(compile_times(repr="str", aggregate=True))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\site-packages\torch\_dynamo\utils.py", line 385, in compile_times
+    out += tabulate(rows, headers=("Function", "Runtimes (s)"))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\site-packages\torch\_dynamo\utils.py", line 148, in tabulate
+    import tabulate
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\site-packages\tabulate\__init__.py", line 763, in <module>
+    _ansi_codes = re.compile(_ansi_escape_pat, re.VERBOSE)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\re\__init__.py", line 228, in compile
+    return _compile(pattern, flags)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\re\__init__.py", line 307, in _compile
+    p = _compiler.compile(pattern, flags)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\re\_compiler.py", line 745, in compile
+    p = _parser.parse(p, flags)
+        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\re\_parser.py", line 979, in parse
+    p = _parse_sub(source, state, flags & SRE_FLAG_VERBOSE, 0)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\re\_parser.py", line 460, in _parse_sub
+    itemsappend(_parse(source, state, verbose, nested + 1,
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\re\_parser.py", line 862, in _parse
+    p = _parse_sub(source, state, sub_verbose, nested + 1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\re\_parser.py", line 460, in _parse_sub
+    itemsappend(_parse(source, state, verbose, nested + 1,
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\re\_parser.py", line 862, in _parse
+    p = _parse_sub(source, state, sub_verbose, nested + 1)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\re\_parser.py", line 460, in _parse_sub
+    itemsappend(_parse(source, state, verbose, nested + 1,
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\re\_parser.py", line 548, in _parse
+    subpatternappend((LITERAL, _ord(this)))
+                               ^^^^^^^^^^
+KeyboardInterrupt:
+[0m

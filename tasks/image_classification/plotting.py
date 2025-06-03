@@ -1,4 +1,3 @@
-
 import numpy as np
 import cv2
 import torch
@@ -7,6 +6,7 @@ import imageio
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib import patheffects
+from matplotlib.patches import Rectangle
 mpl.use('Agg')
 import seaborn as sns
 import numpy as np
@@ -17,6 +17,8 @@ from tqdm.auto import tqdm
 from scipy import ndimage
 import umap
 from scipy.special import softmax
+from scipy.stats import pearsonr
+import json
 
 import subprocess as sp
 import cv2 # Still potentially useful for color conversion checks if needed
@@ -299,9 +301,209 @@ def plot_neural_dynamics(post_activations_history, N_to_plot, save_location, axi
         plt.close(fig_mid)
     return fig_synch, fig_mid, which_neurons_mid, mid_colours
 
+def parse_yolo_labels(label_contents, image_width, image_height):
+    """
+    Parse YOLO format labels and convert to pixel coordinates.
+    
+    Args:
+        label_contents (list): List of label lines from the txt file
+        image_width (int): Width of the image in pixels
+        image_height (int): Height of the image in pixels
+    
+    Returns:
+        list: List of dictionaries with parsed bounding box info
+    """
+    bboxes = []
+    for line in label_contents:
+        parts = line.strip().split()
+        if len(parts) == 5:
+            try:
+                class_id = int(parts[0])
+                x_center_norm = float(parts[1])
+                y_center_norm = float(parts[2])
+                width_norm = float(parts[3])
+                height_norm = float(parts[4])
+                
+                # Convert normalized coordinates to pixel coordinates
+                x_center_pixel = x_center_norm * image_width
+                y_center_pixel = y_center_norm * image_height
+                width_pixel = width_norm * image_width
+                height_pixel = height_norm * image_height
+                
+                # Calculate top-left corner coordinates
+                x_min = x_center_pixel - width_pixel / 2
+                y_min = y_center_pixel - height_pixel / 2
+                x_max = x_center_pixel + width_pixel / 2
+                y_max = y_center_pixel + height_pixel / 2
+                
+                bboxes.append({
+                    'class_id': class_id,
+                    'x_min': x_min,
+                    'y_min': y_min,
+                    'x_max': x_max,
+                    'y_max': y_max,
+                    'width': width_pixel,
+                    'height': height_pixel,
+                    'x_center': x_center_pixel,
+                    'y_center': y_center_pixel
+                })
+            except (ValueError, IndexError) as e:
+                print(f"Warning: Could not parse label line '{line}': {e}")
+                continue
+    return bboxes
 
+def create_image_with_bboxes(image, bboxes, save_path, class_labels=None):
+    """
+    Create and save an image with bounding boxes overlaid.
+    
+    Args:
+        image (numpy.ndarray): Image array in format (H, W, C) with values 0-1
+        bboxes (list): List of bounding box dictionaries from parse_yolo_labels
+        save_path (str): Path to save the output PNG
+        class_labels (list, optional): List of class names for labels
+    """
+    try:
+        # Create figure and axis
+        fig, ax = plt.subplots(1, 1, figsize=(12, 8))
+        
+        # Display the image
+        ax.imshow(image)
+        ax.axis('off')
+        
+        # Define colors for different classes (cycling through a palette)
+        colors = plt.cm.Set3(np.linspace(0, 1, 12))  # 12 distinct colors
+        
+        # Draw each bounding box
+        for i, bbox in enumerate(bboxes):
+            class_id = bbox['class_id']
+            color = colors[class_id % len(colors)]
+            
+            # Create rectangle patch
+            rect = Rectangle(
+                (bbox['x_min'], bbox['y_min']),
+                bbox['width'], 
+                bbox['height'],
+                linewidth=2,
+                edgecolor=color,
+                facecolor='none',
+                alpha=0.8
+            )
+            ax.add_patch(rect)
+            
+            # Add class label if available
+            if class_labels and class_id < len(class_labels):
+                label_text = class_labels[class_id]
+            else:
+                label_text = f"Class {class_id}"
+            
+            # Add text label with background
+            ax.text(
+                bbox['x_min'], 
+                bbox['y_min'] - 5, 
+                label_text,
+                fontsize=10,
+                color='white',
+                bbox=dict(boxstyle="round,pad=0.3", facecolor=color, alpha=0.8),
+                verticalalignment='top'
+            )
+        
+        # Add title
+        title = f"Image with {len(bboxes)} bounding box{'es' if len(bboxes) != 1 else ''}"
+        ax.set_title(title, fontsize=14, pad=20)
+        
+        # Save the figure
+        fig.tight_layout()
+        fig.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.close(fig)
+        
+        print(f"Image with bounding boxes saved to: {save_path}")
+        
+    except Exception as e:
+        print(f"Error creating image with bounding boxes: {e}")
 
-def make_classification_gif(image, target, predictions, certainties, post_activations, attention_tracking, class_labels, save_location):
+def compute_attention_diagnostics(attention_weights, expected_heads=None):
+    """
+    Compute attention head similarity and diversity metrics.
+    
+    Args:
+        attention_weights: numpy array of shape (batch, heads, seq_len) 
+                          or (heads, seq_len) for single batch
+                          or (batch, heads, height, width) for spatial attention
+                          or (heads, height, width) for spatial attention single batch
+    
+    Returns:
+        dict with diagnostic metrics
+    """
+    # Handle different input shapes with better logic
+    if len(attention_weights.shape) == 3:
+        # Could be (batch, heads, seq_len) or (heads, height, width)
+        if expected_heads is not None and attention_weights.shape[0] == expected_heads:
+            # Shape is (heads, height, width) - this is what we expect!
+            attn = attention_weights.reshape(attention_weights.shape[0], -1)  # Flatten: (heads, height*width)
+        else:
+            # Shape is (batch, heads, seq_len) - take first batch  
+            attn = attention_weights[0]  # Shape: (heads, seq_len)
+    else:
+        # Handle other shapes (e.g., (heads, seq_len) or (batch, heads, seq_len))
+        attn = attention_weights
+
+    n_heads, seq_len = attn.shape
+    
+    # Ensure we're computing correlations between heads (rows), not positions (columns)
+    # np.corrcoef computes correlations between rows by default
+    # So attn should be (n_heads, seq_len) where each row is an attention head's pattern
+    correlations = np.corrcoef(attn)
+    
+    # Handle edge case where we only have 1 head (correlation matrix would be scalar)
+    if n_heads == 1:
+        correlations = np.array([[1.0]])  # Perfect self-correlation
+    
+    # Ensure correlation matrix is the right size
+    assert correlations.shape == (n_heads, n_heads), f"Expected correlation matrix of shape ({n_heads}, {n_heads}), got {correlations.shape}"
+    
+    # Find redundant head pairs (correlation > 0.8)
+    redundant_pairs = []
+    redundancy_scores = []
+    for i in range(n_heads):
+        for j in range(i+1, n_heads):
+            corr = correlations[i, j]
+            if corr > 0.8:
+                redundant_pairs.append((i, j))
+                redundancy_scores.append(corr)
+    
+    # Compute attention entropy for each head (diversity measure)
+    entropies = []
+    for i in range(n_heads):
+        attn_head = attn[i] + 1e-8  # Avoid log(0)
+        attn_head = attn_head / attn_head.sum()  # Normalize
+        entropy = -np.sum(attn_head * np.log(attn_head))
+        entropies.append(entropy)
+    
+    # Compute attention spread (how concentrated attention is)
+    spreads = []
+    for i in range(n_heads):
+        attn_head = attn[i]
+        # Compute standard deviation of attention weights
+        spread = np.std(attn_head)
+        spreads.append(spread)
+    
+    # Overall redundancy score (mean pairwise correlation)
+    if n_heads > 1:
+        mean_correlation = np.mean(correlations[np.triu_indices(n_heads, k=1)])
+    else:
+        mean_correlation = 0.0  # No pairs to correlate
+    
+    return {
+        'correlations': correlations,
+        'redundant_pairs': redundant_pairs,
+        'redundancy_scores': redundancy_scores,
+        'entropies': entropies,
+        'spreads': spreads,
+        'mean_correlation': mean_correlation,
+        'num_redundant_pairs': len(redundant_pairs)
+    }
+
+def make_classification_gif(image, target, predictions, certainties, post_activations, attention_tracking, class_labels, save_location, dataset=None, sample_index=None):
     cmap_viridis = sns.color_palette('viridis', as_cmap=True)
     cmap_spectral = sns.color_palette("Spectral", as_cmap=True)
     figscale = 2
@@ -384,13 +586,15 @@ def make_classification_gif(image, target, predictions, certainties, post_activa
                       ['umap', 'umap', 'umap', 'umap'],
                       ['umap', 'umap', 'umap', 'umap'],
                       ['umap', 'umap', 'umap', 'umap'],
+                      ['diagnostics_corr', 'diagnostics_corr', 'diagnostics_text', 'diagnostics_text'],
+                      ['diagnostics_corr', 'diagnostics_corr', 'diagnostics_text', 'diagnostics_text'],
                      
                       ]
             
             
             img_aspect = image.shape[0]/image.shape[1]
             # print(img_aspect)
-            aspect_ratio = (4*figscale, 8*figscale*img_aspect)
+            aspect_ratio = (4*figscale, 10*figscale*img_aspect)  # Increased height for diagnostics
             fig, axes = plt.subplot_mosaic(mosaic, figsize=aspect_ratio)
             for ax in axes.values():
                 ax.axis('off')
@@ -478,6 +682,129 @@ def make_classification_gif(image, target, predictions, certainties, post_activa
             z = post_activations_normed[stepi]
 
             axes['umap'].scatter(x_umap, y_umap, s=30, c=cmap_spectral(z))
+            
+            # Add attention diagnostics
+            # Get current attention weights for all heads (shape: batch, heads, seq_len)
+            current_attention = attention_tracking[stepi]  # Shape: (batch, heads, seq_len)
+            
+            # Compute diagnostics
+            diagnostics = compute_attention_diagnostics(current_attention, expected_heads=n_heads)
+            
+            # Plot correlation matrix heatmap
+            corr_matrix = diagnostics['correlations']
+            im = axes['diagnostics_corr'].imshow(corr_matrix, cmap='RdBu_r', vmin=-1, vmax=1)
+            axes['diagnostics_corr'].set_title('Head Correlations', fontsize=10, color='white')
+            
+            # Set head labels
+            head_labels = [f'H{i}' for i in range(n_heads)]
+            axes['diagnostics_corr'].set_xticks(range(n_heads))
+            axes['diagnostics_corr'].set_yticks(range(n_heads))
+            axes['diagnostics_corr'].set_xticklabels(head_labels, fontsize=8, color='white')
+            axes['diagnostics_corr'].set_yticklabels(head_labels, fontsize=8, color='white')
+            
+            # Display diagnostic text metrics
+            axes['diagnostics_text'].axis('off')
+            
+            # Prepare diagnostic text with color coding
+            diag_text = []
+            diag_text.append(f"Step: {stepi+1}/{n_steps}")
+            
+            # Color-coded mean correlation interpretation
+            mean_corr = diagnostics['mean_correlation']
+            if mean_corr < 0.3:
+                corr_color = 'limegreen'  # Good diversity
+                corr_status = "GOOD DIVERSITY"
+            elif mean_corr < 0.6:
+                corr_color = 'orange'      # Some redundancy
+                corr_status = "SOME REDUNDANCY"
+            else:
+                corr_color = 'red'         # High redundancy
+                corr_status = "HIGH REDUNDANCY"
+            
+            # Color-coded redundant pairs interpretation  
+            num_redundant = diagnostics['num_redundant_pairs']
+            total_possible_pairs = n_heads * (n_heads - 1) // 2
+            if num_redundant == 0:
+                pairs_color = 'limegreen'  # Perfect
+                pairs_status = "PERFECT"
+            elif num_redundant <= 2:
+                pairs_color = 'gold'       # Mild concern
+                pairs_status = "MILD CONCERN"
+            else:
+                pairs_color = 'red'        # Problem
+                pairs_status = "PROBLEMATIC"
+            
+            # Create colored text sections
+            diag_text.append(f"Mean Correlation: {mean_corr:.3f}")
+            diag_text.append(f"Status: {corr_status}")
+            diag_text.append("")  # Spacer
+            diag_text.append(f"Redundant Pairs: {num_redundant}/{total_possible_pairs}")
+            diag_text.append(f"Status: {pairs_status}")
+            
+            # Add entropy info (head diversity)
+            avg_entropy = np.mean(diagnostics['entropies'])
+            min_entropy = np.min(diagnostics['entropies'])
+            max_entropy = np.max(diagnostics['entropies'])
+            diag_text.append("")  # Spacer
+            diag_text.append(f"Avg Entropy: {avg_entropy:.3f}")
+            diag_text.append(f"Entropy Range: {min_entropy:.3f}-{max_entropy:.3f}")
+            
+            # Low entropy heads (most focused)
+            low_entropy_heads = np.where(np.array(diagnostics['entropies']) < avg_entropy - np.std(diagnostics['entropies']))[0]
+            if len(low_entropy_heads) > 0:
+                diag_text.append(f"Focused Heads: {[f'H{h}' for h in low_entropy_heads]}")
+            
+            # High entropy heads (most exploratory) 
+            high_entropy_heads = np.where(np.array(diagnostics['entropies']) > avg_entropy + np.std(diagnostics['entropies']))[0]
+            if len(high_entropy_heads) > 0:
+                diag_text.append(f"Exploratory Heads: {[f'H{h}' for h in high_entropy_heads]}")
+            
+            # Display main text
+            main_text = '\n'.join(diag_text[:2])  # Step and mean correlation
+            axes['diagnostics_text'].text(0.05, 0.95, main_text, 
+                                        transform=axes['diagnostics_text'].transAxes,
+                                        verticalalignment='top', horizontalalignment='left',
+                                        fontsize=9, color='white',
+                                        bbox=dict(boxstyle="round,pad=0.3", facecolor='black', alpha=0.8))
+            
+            # Display correlation status with colored background
+            axes['diagnostics_text'].text(0.05, 0.80, f"Status: {corr_status}", 
+                                        transform=axes['diagnostics_text'].transAxes,
+                                        verticalalignment='top', horizontalalignment='left',
+                                        fontsize=8, color='black', weight='bold',
+                                        bbox=dict(boxstyle="round,pad=0.3", facecolor=corr_color, alpha=0.8))
+            
+            # Display redundant pairs info
+            pairs_text = f"Redundant Pairs: {num_redundant}/{total_possible_pairs}"
+            axes['diagnostics_text'].text(0.05, 0.65, pairs_text, 
+                                        transform=axes['diagnostics_text'].transAxes,
+                                        verticalalignment='top', horizontalalignment='left',
+                                        fontsize=9, color='white',
+                                        bbox=dict(boxstyle="round,pad=0.3", facecolor='black', alpha=0.8))
+            
+            # Display pairs status with colored background
+            axes['diagnostics_text'].text(0.05, 0.50, f"Status: {pairs_status}", 
+                                        transform=axes['diagnostics_text'].transAxes,
+                                        verticalalignment='top', horizontalalignment='left',
+                                        fontsize=8, color='black', weight='bold',
+                                        bbox=dict(boxstyle="round,pad=0.3", facecolor=pairs_color, alpha=0.8))
+            
+            # Display entropy and head type info
+            entropy_text = '\n'.join(diag_text[6:])  # Entropy info and head types
+            if entropy_text.strip():  # Only display if there's content
+                axes['diagnostics_text'].text(0.05, 0.35, entropy_text, 
+                                            transform=axes['diagnostics_text'].transAxes,
+                                            verticalalignment='top', horizontalalignment='left',
+                                            fontsize=8, color='lightgray',
+                                            bbox=dict(boxstyle="round,pad=0.2", facecolor='black', alpha=0.6))
+            
+            # Add legend/interpretation guide
+            legend_text = "Green: Good  Yellow: Concern  Red: Problem"
+            axes['diagnostics_text'].text(0.05, 0.05, legend_text, 
+                                        transform=axes['diagnostics_text'].transAxes,
+                                        verticalalignment='bottom', horizontalalignment='left',
+                                        fontsize=7, color='white', style='italic',
+                                        bbox=dict(boxstyle="round,pad=0.2", facecolor='darkgray', alpha=0.7))
         
             fig.tight_layout(pad=0.1)
             
@@ -492,3 +819,152 @@ def make_classification_gif(image, target, predictions, certainties, post_activa
             pbar_inner.update(1)
         pbar_inner.set_description('Saving gif')
         imageio.mimsave(save_location, frames, fps=15, loop=100)
+        
+        # Save classification data to JSON file
+        json_location = save_location.replace('.gif', '.json')
+        
+        # Prepare data for JSON export
+        json_data = {
+            'target_class_index': int(target),
+            'target_class_name': class_labels[target] if target < len(class_labels) else f"Unknown_{target}",
+            'class_labels': class_labels,
+            'image_shape': list(image.shape),
+            'n_internal_iterations': int(predictions.shape[1]),
+            'n_attention_heads': int(attention_tracking.shape[1]),
+            'predictions_per_timestep': [],
+            'certainties_per_timestep': certainties.tolist(),
+            'final_prediction': {
+                'class_index': int(predictions[:, -1].argmax()),
+                'class_name': class_labels[int(predictions[:, -1].argmax())] if int(predictions[:, -1].argmax()) < len(class_labels) else f"Unknown_{int(predictions[:, -1].argmax())}",
+                'confidence': float(torch.softmax(torch.from_numpy(predictions[:, -1]), -1).max()),
+                'is_correct': bool(predictions[:, -1].argmax() == target)
+            },
+            'most_certain_timestep': {
+                'timestep': int(certainties[1].argmax()),
+                'certainty_value': float(certainties[1].max()),
+                'prediction_at_most_certain': {
+                    'class_index': int(predictions[:, certainties[1].argmax()].argmax()),
+                    'class_name': class_labels[int(predictions[:, certainties[1].argmax()].argmax())] if int(predictions[:, certainties[1].argmax()].argmax()) < len(class_labels) else f"Unknown_{int(predictions[:, certainties[1].argmax()].argmax())}",
+                    'confidence': float(torch.softmax(torch.from_numpy(predictions[:, certainties[1].argmax()]), -1).max()),
+                    'is_correct': bool(predictions[:, certainties[1].argmax()].argmax() == target)
+                }
+            },
+            'accuracy_over_time': [],
+            'top_predictions_final_timestep': []
+        }
+        
+        # Add SARD-specific metadata if dataset and sample_index are provided
+        if dataset is not None and sample_index is not None:
+            from data.custom_datasets import SARDClassificationDataset
+            if isinstance(dataset, SARDClassificationDataset):
+                try:
+                    # Get the sample info from dataset
+                    if sample_index < len(dataset.samples):
+                        img_path, target_label = dataset.samples[sample_index]
+                        
+                        # Get label file path
+                        img_filename = os.path.basename(img_path)
+                        label_filename = os.path.splitext(img_filename)[0] + '.txt'
+                        label_path = os.path.join(dataset.label_dir, label_filename)
+                        
+                        # Read label file contents
+                        label_contents = []
+                        if os.path.exists(label_path):
+                            try:
+                                with open(label_path, 'r') as f:
+                                    for line in f:
+                                        line = line.strip()
+                                        if line:  # Skip empty lines
+                                            label_contents.append(line)
+                            except Exception as e:
+                                print(f"Warning: Could not read label file {label_path}: {e}")
+                        
+                        # Create image with bounding boxes if we have labels
+                        if label_contents:
+                            # For SARD dataset, we typically have human detection (class 0)
+                            sard_class_labels = ['human']  # SARD typically has just one class: human
+                            image_height, image_width = image.shape[:2]
+                            
+                            # Parse YOLO format bounding boxes
+                            bboxes = parse_yolo_labels(label_contents, image_width, image_height)
+                            
+                            if bboxes:
+                                # Create PNG with bounding boxes
+                                bbox_png_location = save_location.replace('.gif', '_with_bboxes.png')
+                                create_image_with_bboxes(image, bboxes, bbox_png_location, sard_class_labels)
+                                
+                                # Add bounding box info to JSON metadata
+                                json_data['sard_metadata']['bounding_boxes'] = []
+                                for bbox in bboxes:
+                                    json_data['sard_metadata']['bounding_boxes'].append({
+                                        'class_id': bbox['class_id'],
+                                        'class_name': sard_class_labels[bbox['class_id']] if bbox['class_id'] < len(sard_class_labels) else f"Class_{bbox['class_id']}",
+                                        'x_center_normalized': bbox['x_center'] / image_width,
+                                        'y_center_normalized': bbox['y_center'] / image_height,
+                                        'width_normalized': bbox['width'] / image_width,
+                                        'height_normalized': bbox['height'] / image_height,
+                                        'x_min_pixel': bbox['x_min'],
+                                        'y_min_pixel': bbox['y_min'],
+                                        'x_max_pixel': bbox['x_max'],
+                                        'y_max_pixel': bbox['y_max']
+                                    })
+                                json_data['sard_metadata']['bbox_image_path'] = bbox_png_location
+                            else:
+                                print(f"Warning: Label file exists but no valid bounding boxes found: {label_path}")
+                        
+                        # Add SARD metadata to JSON
+                        json_data['sard_metadata'] = json_data.get('sard_metadata', {})
+                        json_data['sard_metadata'].update({
+                            'image_path': img_path,
+                            'label_path': label_path,
+                            'label_file_exists': os.path.exists(label_path),
+                            'label_contents': label_contents,
+                            'dataset_split': dataset.split,
+                            'sample_index': int(sample_index),
+                            'has_human_label': bool(target_label)
+                        })
+                        
+                except Exception as e:
+                    print(f"Warning: Could not extract SARD metadata for sample {sample_index}: {e}")
+        
+        # Add predictions for each timestep
+        for t in range(predictions.shape[1]):
+            probs = torch.softmax(torch.from_numpy(predictions[:, t]), -1)
+            pred_class = int(predictions[:, t].argmax())
+            json_data['predictions_per_timestep'].append({
+                'timestep': t,
+                'predicted_class_index': pred_class,
+                'predicted_class_name': class_labels[pred_class] if pred_class < len(class_labels) else f"Unknown_{pred_class}",
+                'confidence': float(probs.max()),
+                'is_correct': bool(pred_class == target),
+                'all_class_probabilities': probs.tolist()
+            })
+            
+            # Track accuracy over time
+            json_data['accuracy_over_time'].append({
+                'timestep': t,
+                'is_correct': bool(pred_class == target),
+                'certainty': float(certainties[1, t])
+            })
+        
+        # Add top predictions for final timestep
+        final_probs = torch.softmax(torch.from_numpy(predictions[:, -1]), -1)
+        top_k = min(5, len(class_labels))  # Top 5 or all classes if fewer
+        topk_indices = torch.topk(final_probs, top_k, dim=0, largest=True).indices
+        for i, idx in enumerate(topk_indices):
+            idx = int(idx)
+            json_data['top_predictions_final_timestep'].append({
+                'rank': i + 1,
+                'class_index': idx,
+                'class_name': class_labels[idx] if idx < len(class_labels) else f"Unknown_{idx}",
+                'probability': float(final_probs[idx]),
+                'is_target': bool(idx == target)
+            })
+        
+        # Save JSON file
+        try:
+            with open(json_location, 'w') as f:
+                json.dump(json_data, f, indent=2)
+            print(f"Classification data saved to: {json_location}")
+        except Exception as e:
+            print(f"Warning: Could not save JSON data to {json_location}: {e}")

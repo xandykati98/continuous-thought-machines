@@ -1,0 +1,1947 @@
+Using device: cuda
+Froze base model parameters.
+Adapter parameters are trainable.
+Test set size: 1000
+Prepared a fixed sample from test_ds for qualitative checking. Prompt length: 453 tokens.
+Training set size: 68841
+Starting dataset preprocessing for training data...
+Training dataset preprocessing finished.
+Train DataLoader created with batch size 2. Number of batches: 34421
+Created DataLoader with batch size 2. Number of batches: 34421
+Starting training for 5 epochs...
+Generating sample for epoch 1 start...
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
+
+```JavaScript
+
+
+```JavaScript
+
+
+
+```JavaScript
+//
+
+
+```JavaScript
+// Copyright
+
+
+```JavaScript
+// Copyright
+
+
+```JavaScript
+// Copyright 2
+
+
+```JavaScript
+// Copyright 20
+
+
+```JavaScript
+// Copyright 201
+
+
+```JavaScript
+// Copyright 2014
+
+
+```JavaScript
+// Copyright 2014,
+
+
+```JavaScript
+// Copyright 2014, Ren
+
+
+```JavaScript
+// Copyright 2014, Renasar
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/*
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* j
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename,
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function ()
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+//
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+before
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function ()
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    //
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+//
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Te
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+after
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function ()
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    //
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+//
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service',
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function ()
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses',
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function ()
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        //
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1:
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1: Direct
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1: Direct lookup
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1: Direct lookup
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1: Direct lookup
+
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1: Direct lookup
+        var
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1: Direct lookup
+        var ip
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1: Direct lookup
+        var ip =
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1: Direct lookup
+        var ip = '
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1: Direct lookup
+        var ip = '1
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1: Direct lookup
+        var ip = '19
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1: Direct lookup
+        var ip = '192
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1: Direct lookup
+        var ip = '192.
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1: Direct lookup
+        var ip = '192.1
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1: Direct lookup
+        var ip = '192.16
+
+
+```JavaScript
+// Copyright 2014, Renasar Technologies Inc.
+/* jshint node:true */
+
+describe(__filename, function () {
+    it('needs specs');
+});
+
+// Setup
+beforeEach(function () {
+    // Initialize any necessary data structures
+});
+
+// Teardown
+afterEach(function () {
+    // Clean up any resources
+});
+
+// Test cases for Lookup Service
+describe('Lookup Service', function () {
+    it('should convert IP addresses to MAC addresses', function () {
+        // Test case 1: Direct lookup
+        var ip = '192.168
+Traceback (most recent call last):
+  File "C:\Users\Alexandre\Documents\GitHub\continuous-thought-machines\tasks\adapter_llm\train.py", line 319, in <module>
+    generate_and_log_sample(model, adapter, tokenizer, device, epoch=epoch, run_id=run_id, epoch_completion=0.0, current_loss=None)
+  File "C:\Users\Alexandre\Documents\GitHub\continuous-thought-machines\tasks\adapter_llm\train.py", line 219, in generate_and_log_sample
+    print(f"\r{tokenizer.decode(generated_ids[0][prompt_ids.shape[1]:], skip_special_tokens=True)}", end="", flush=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\site-packages\transformers\tokenization_utils_base.py", line 3868, in decode
+    token_ids = to_py_obj(token_ids)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\site-packages\transformers\utils\generic.py", line 289, in to_py_obj
+    return framework_to_py_obj[framework](obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Alexandre\AppData\Local\Programs\Python\Python312\Lib\site-packages\transformers\utils\generic.py", line 279, in <lambda>
+    "pt": lambda obj: obj.tolist(),
+                      ^^^^^^^^^^^^
+KeyboardInterrupt
