@@ -24,7 +24,7 @@ def modal__train_adapter_ctm():
     from datasets import load_dataset
     from huggingface_hub import login
     import wandb # Added for W&B integration
-    wandb.login(key="5c0d2d6b1fcad21af4e0cc3894c119285c4ddae5")
+    wandb.login(key="")
     try:
         login(token="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") 
         print("Successfully logged into Hugging Face Hub.")
