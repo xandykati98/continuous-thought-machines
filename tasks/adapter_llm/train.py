@@ -26,7 +26,7 @@ def modal__train_adapter_ctm():
     import wandb # Added for W&B integration
     wandb.login(key="")
     try:
-        login(token="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") 
+        login(token="") 
         print("Successfully logged into Hugging Face Hub.")
     except Exception as e:
         print(f"Hugging Face Hub login failed: {e}. Dataset loading might fail if it's private.")
