@@ -24,9 +24,9 @@ def modal__train_adapter_ctm():
     from datasets import load_dataset
     from huggingface_hub import login
     import wandb # Added for W&B integration
-    wandb.login(key="")
+    wandb.login(key="5c0d2d6b1fcad21af4e0cc3894c119285c4ddae5")
     try:
-        login(token="") 
+        login(token="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") 
         print("Successfully logged into Hugging Face Hub.")
     except Exception as e:
         print(f"Hugging Face Hub login failed: {e}. Dataset loading might fail if it's private.")
@@ -35,20 +35,27 @@ def modal__train_adapter_ctm():
     try:
         ds = load_dataset("PrimeIntellect/real-world-swe-problems", split="train") # Using train split
         print(f"Dataset loaded. Number of examples: {len(ds)}")
+
+        # For testing, use a much smaller subset of the dataset
+        max_dataset_size_for_testing = 5000000000 # Adjust this value as needed for testing
+        if len(ds) > max_dataset_size_for_testing:
+            ds = ds.select(range(max_dataset_size_for_testing))
+            print(f"Reduced dataset to first {max_dataset_size_for_testing} examples for testing. New size: {len(ds)}")
+
     except Exception as e:
         print(f"Failed to load dataset: {e}")
         print("Exiting due to dataset loading failure.")
         exit()
 
 
-    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-Coder-0.5B-Instruct")
+    tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-0.5B-Instruct")
     # Add padding token if it doesn't exist. For Causal LMs, often pad_token = eos_token.
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
         # model.config.pad_token_id = tokenizer.eos_token_id # This line caused an error if model not defined yet
         print("Set tokenizer.pad_token to tokenizer.eos_token")
 
-    model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-Coder-0.5B-Instruct")
+    model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-0.5B-Instruct")
     if tokenizer.pad_token_id is not None and model.config.pad_token_id is None:
         model.config.pad_token_id = tokenizer.pad_token_id
         print(f"Set model.config.pad_token_id to {tokenizer.pad_token_id}")
@@ -74,12 +81,12 @@ def modal__train_adapter_ctm():
 
     # Initialize W&B
     # Generate a unique run ID for this training session
-    run_id = f"run_Qwen_Adapter_0.5B_Instruct_{int(time.time())}" 
+    run_id = f"run_Qwen_Adapter_0.5B_Instruct__Linear__{int(time.time())}" 
     wandb.init(project="adapter_llm_training", name=run_id, config={
         "learning_rate": 1e-4, # Example, adjust as needed
-        "epochs": 5, # Example, adjust as needed
+        "epochs": 1, # Example, adjust as needed
         "batch_size": 3, # Example, adjust as needed
-        "model_name": "Qwen/Qwen2.5-Coder-0.5B-Instruct",
+        "model_name": "Qwen/Qwen2.5-0.5B-Instruct",
         "adapter_bottleneck": 1024,
         "dataset": "PrimeIntellect/real-world-swe-problems",
         "run_id": run_id,
@@ -289,26 +296,51 @@ def modal__train_adapter_ctm():
             "sample_index": sample_index
         }
         
-        # Save to the main generation_sample.json (overwrite)
-        try:
-            with open(base_filename, 'w', encoding='utf-8') as f:
-                json.dump(sample_output, f, indent=4, ensure_ascii=False)
-            print(f"Saved latest sample generation to {base_filename}")
-        except Exception as e:
-            print(f"Error saving sample generation to {base_filename}: {e}")
-
-        # Save detailed record to a separate directory
-        log_dir = "generation_logs"
-        if not os.path.exists(log_dir):
-            os.makedirs(log_dir)
+        # Define base directory for this run's outputs on the volume
+        run_output_dir_on_volume = MODEL_DIR / run_id
         
-        detailed_filename = os.path.join(log_dir, f"log_epoch{epoch}_run{run_id}_time{time.strftime('%Y%m%d-%H%M%S')}.json")
+        # Path for the main sample file (e.g., generation_sample.json, final_generation_sample.json)
+        main_sample_filepath_on_volume = run_output_dir_on_volume / base_filename # base_filename is passed as arg
+        
+        # Path for detailed logs directory
+        detailed_logs_dir_on_volume = run_output_dir_on_volume / "detailed_generation_logs"
+
+        # Create directories on the volume if they don't exist
         try:
-            with open(detailed_filename, 'w', encoding='utf-8') as f:
-                json.dump(sample_output, f, indent=4, ensure_ascii=False)
-            print(f"Saved detailed sample generation to {detailed_filename}")
+            os.makedirs(detailed_logs_dir_on_volume, exist_ok=True) # Ensures run_output_dir_on_volume is also created
+            print(f"Ensured directory exists for sample logs: {detailed_logs_dir_on_volume}")
         except Exception as e:
-            print(f"Error saving detailed sample generation to {detailed_filename}: {e}")
+            print(f"Error creating directory on volume {detailed_logs_dir_on_volume}: {e}")
+            # Depending on desired behavior, could raise e or return
+
+        # Save the main sample generation to the volume
+        try:
+            with open(main_sample_filepath_on_volume, 'w', encoding='utf-8') as f:
+                json.dump(sample_output, f, indent=4, ensure_ascii=False)
+            print(f"Saved latest sample generation to {main_sample_filepath_on_volume} on Modal Volume.")
+        except Exception as e:
+            print(f"Error saving sample generation to {main_sample_filepath_on_volume} on Modal Volume: {e}")
+
+        # Construct filename for the detailed log on the volume
+        # Using a consistent naming convention for detailed logs
+        time_str = time.strftime('%Y%m%d-%H%M%S')
+        detailed_log_actual_filename = f"log_epoch{epoch}_run{run_id}_time{time_str}.json"
+        detailed_log_filepath_on_volume = detailed_logs_dir_on_volume / detailed_log_actual_filename
+        
+        # Save detailed record to the volume
+        try:
+            with open(detailed_log_filepath_on_volume, 'w', encoding='utf-8') as f:
+                json.dump(sample_output, f, indent=4, ensure_ascii=False)
+            print(f"Saved detailed sample generation to {detailed_log_filepath_on_volume} on Modal Volume.")
+        except Exception as e:
+            print(f"Error saving detailed sample generation to {detailed_log_filepath_on_volume} on Modal Volume: {e}")
+
+        # Commit changes to the volume after all file operations for this sample
+        try:
+            volume.commit()
+            print(f"Successfully committed sample logs for run {run_id}, epoch {epoch} to Modal Volume.")
+        except Exception as e:
+            print(f"Error committing sample logs to Modal Volume: {e}")
         
         # Log to W&B
         if wandb.run:
@@ -421,6 +453,33 @@ def modal__train_adapter_ctm():
         print(f"Epoch {epoch+1}/{num_epochs} finished. Average Loss: {avg_epoch_loss:.4f}")
         if wandb.run:
             wandb.log({"average_epoch_loss": avg_epoch_loss, "epoch": epoch})
+
+        # Save checkpoint to Modal Volume at the end of each epoch
+        checkpoint_base_dir_on_volume = MODEL_DIR / "checkpoints"
+        run_checkpoint_dir_on_volume = checkpoint_base_dir_on_volume / run_id
+        # Use epoch+1 for 1-indexed epoch folder name, matching print statements
+        epoch_checkpoint_dir_on_volume = run_checkpoint_dir_on_volume / f"epoch_{epoch+1}"
+        
+        try:
+            os.makedirs(epoch_checkpoint_dir_on_volume, exist_ok=True)
+            print(f"Ensured checkpoint directory exists: {epoch_checkpoint_dir_on_volume}")
+        except Exception as e:
+            print(f"Error creating checkpoint directory {epoch_checkpoint_dir_on_volume} on volume: {e}")
+            # Continue attempt to save, might fail if dir creation failed but path was already there
+
+        checkpoint_filename = "adapter_checkpoint.pth"
+        checkpoint_path_on_volume = epoch_checkpoint_dir_on_volume / checkpoint_filename
+
+        try:
+            torch.save(adapter.state_dict(), checkpoint_path_on_volume)
+            print(f"Saved adapter checkpoint for epoch {epoch+1} to {checkpoint_path_on_volume} on Modal Volume.")
+            volume.commit() # Persist the checkpoint
+            print(f"Successfully committed checkpoint for epoch {epoch+1} to Modal Volume.")
+            if wandb.run:
+                # Log the string representation of the Path object
+                wandb.log({"epoch_checkpoint_path": str(checkpoint_path_on_volume), "epoch": epoch})
+        except Exception as e:
+            print(f"Error saving or committing checkpoint for epoch {epoch+1} to {checkpoint_path_on_volume}: {e}")
 
 
     print("Training loop finished.")
