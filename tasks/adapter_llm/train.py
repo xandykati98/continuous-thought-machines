@@ -2,16 +2,17 @@
 from pathlib import Path
 import modal
 
-image = modal.Image.debian_slim(python_version="3.12").pip_install("transformers", "datasets", "torch", "huggingface-hub", "wandb")
+image = modal.Image.debian_slim(python_version="3.12").pip_install("transformers", "datasets", "torch", "huggingface-hub", "muon-optimizer", "wandb").add_local_python_source("models")
 
 app = modal.App(name="adapter-ctm-training-app", image=image)
 
 MODEL_DIR = Path("/models")
 
 volume = modal.Volume.from_name("adapter-ctm", create_if_missing=True)
-@app.function(gpu="A10G", image=image, timeout=3600*4, volumes={MODEL_DIR: volume})
+@app.function(gpu="a100", image=image, timeout=3600*23, volumes={MODEL_DIR: volume})
 def modal__train_adapter_ctm():
-    
+    from models.ctm import ContinuousThoughtMachine
+    print(ContinuousThoughtMachine)
     import time
     import json # Added for saving sample output
     import os # Added for creating directories
@@ -24,6 +25,16 @@ def modal__train_adapter_ctm():
     from datasets import load_dataset
     from huggingface_hub import login
     import wandb # Added for W&B integration
+    # Import CTM
+    # from models.ctm import ContinuousThoughtMachine # Adjusted path
+    # Assuming models/ is in python path for Modal, or use relative if appropriate for local execution context.
+    # For Modal, if workspace is mounted, 'from models.ctm import ContinuousThoughtMachine' might work if run from root.
+    # Using placeholder, as actual import path depends on Modal execution context and file structure.
+    # This was added by the AI: from ..models.ctm import ContinuousThoughtMachine # Added for CTM
+
+
+
+    
     wandb.login(key="5c0d2d6b1fcad21af4e0cc3894c119285c4ddae5")
     try:
         login(token="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") 
@@ -37,7 +48,7 @@ def modal__train_adapter_ctm():
         print(f"Dataset loaded. Number of examples: {len(ds)}")
 
         # For testing, use a much smaller subset of the dataset
-        max_dataset_size_for_testing = 5000000000 # Adjust this value as needed for testing
+        max_dataset_size_for_testing = 50000000000 # Adjust this value as needed for testing
         if len(ds) > max_dataset_size_for_testing:
             ds = ds.select(range(max_dataset_size_for_testing))
             print(f"Reduced dataset to first {max_dataset_size_for_testing} examples for testing. New size: {len(ds)}")
@@ -56,44 +67,160 @@ def modal__train_adapter_ctm():
         print("Set tokenizer.pad_token to tokenizer.eos_token")
 
     model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen2.5-0.5B-Instruct")
+    
     if tokenizer.pad_token_id is not None and model.config.pad_token_id is None:
         model.config.pad_token_id = tokenizer.pad_token_id
         print(f"Set model.config.pad_token_id to {tokenizer.pad_token_id}")
 
-    # Define a mock adapter
-    class Adapter(nn.Module):
-        def __init__(self, input_dim, bottleneck_dim):
-            super(Adapter, self).__init__()
-            self.down_project = nn.Linear(input_dim, bottleneck_dim)
-            self.relu = nn.ReLU()
-            self.up_project = nn.Linear(bottleneck_dim, input_dim)
+    # Initialize W&B
+    # Generate a unique run ID for this training session
+    # Update run_id for CTM
+    run_id = f"run_Qwen_Adapter_0.5B_Instruct__CTM__updownzero_with_norm_low_certainties_adamw__{int(time.time())}" 
+    wandb.init(project="adapter_llm_training", name=run_id, config={
+        "learning_rate": 1e-4,
+        "epochs": 3, 
+        "batch_size": 3, 
+        "model_name": "Qwen/Qwen2.5-0.5B-Instruct",
+        # "adapter_bottleneck": 1024, # This is for the old linear adapter, new one is ctm_bottleneck_dim
+        "dataset": "PrimeIntellect/real-world-swe-problems",
+        "run_id": run_id,
+        "wandb_api_key": "5c0d2d6b1fcad21af4e0cc3894c119285c4ddae5",
+        # CTM Adapter Hyperparameters
+        "adapter_type": "CTM",
+        "ctm_bottleneck_dim": 896,          # Would become 1536
+        "ctm_d_model": 896*2,                # Should be >= bottleneck_dim, so maybe 1536 or 2048
+        "ctm_internal_attn_dim": 896,       # Could become 1536 for consistency
+        "ctm_iterations": 80,                # More thinking steps
+        "ctm_heads": 8,                     # Enable attention
+        "ctm_n_synch_out": 512,
+        "ctm_n_synch_action": 512,
+        "ctm_synapse_depth": 8,             # Deeper synapses
+        "ctm_memory_length": 8,             # Longer memory
+        "ctm_deep_nlms": True,
+        "ctm_memory_hidden_dims": 32,
+        "ctm_do_layernorm_nlm": False,
+        "ctm_dropout": 0.1,
+        "ctm_dropout_nlm": 0.1,
+        "ctm_neuron_select_type": 'random-pairing',
+        "ctm_n_random_pairing_self": 4,
+        "ctm_backbone_type": "token-processing",  # Use new token-processing backbone
+        "ctm_positional_embedding_type": "sequence-rotational",
+        # Certainty weighting hyperparameters
+        "use_certainty_weighting": True,
+        "certainty_weighting_mode": "final",  # Options: 'final', 'max', 'avg'
+        "certainty_scaling_factor": 0.5,    # Scale the certainty values
+        "optimizer": "adamw",  # Track which optimizer you're using
+    })
 
-        def forward(self, x):
-            residual = x
-            x = self.down_project(x)
-            x = self.relu(x)
-            x = self.up_project(x)
-            return x + residual
+    class CTMAdapter(nn.Module):
+        def __init__(self, llm_hidden_dim, ctm_config):
+            super().__init__()
+            self.llm_hidden_dim = llm_hidden_dim
+            
+            # CTM Core - the main thinking machine
+            self.ctm_core = ContinuousThoughtMachine(
+                iterations=ctm_config['ctm_iterations'],
+                d_model=ctm_config['ctm_d_model'],
+                d_input=ctm_config['ctm_internal_attn_dim'], # CTM's internal attention data dim
+                heads=ctm_config['ctm_heads'],
+                n_synch_out=ctm_config['ctm_n_synch_out'],
+                n_synch_action=ctm_config['ctm_n_synch_action'],
+                synapse_depth=ctm_config['ctm_synapse_depth'],
+                memory_length=ctm_config['ctm_memory_length'],
+                deep_nlms=ctm_config['ctm_deep_nlms'],
+                memory_hidden_dims=ctm_config['ctm_memory_hidden_dims'],
+                do_layernorm_nlm=ctm_config['ctm_do_layernorm_nlm'],
+                backbone_type=ctm_config['ctm_backbone_type'],
+                positional_embedding_type=ctm_config['ctm_positional_embedding_type'],
+                out_dims=llm_hidden_dim,
+                prediction_reshaper=[-1, ctm_config['ctm_bottleneck_dim']],
+                dropout=ctm_config['ctm_dropout'],
+                dropout_nlm=ctm_config['ctm_dropout_nlm'],
+                neuron_select_type=ctm_config['ctm_neuron_select_type'],
+                n_random_pairing_self=ctm_config['ctm_n_random_pairing_self']
+            )
+            
+            # Projection layers with normalization
+            self.down_proj = nn.Sequential(
+                nn.Linear(llm_hidden_dim, llm_hidden_dim),
+                nn.LayerNorm(llm_hidden_dim)
+            )
+            self.up_proj = nn.Sequential(
+                nn.LayerNorm(llm_hidden_dim),
+                nn.Linear(llm_hidden_dim, llm_hidden_dim)
+            )
+            
+            # Custom initialization for projections only (CTM has its own init)
+            self._init_adapter_weights()
+            
+            # Add hyperparameters for certainty weighting
+            self.use_certainty_weighting = ctm_config.get('use_certainty_weighting', True)
+            self.certainty_weighting_mode = ctm_config.get('certainty_weighting_mode', 'final')  # 'final', 'max', 'avg'
+            self.certainty_scaling_factor = ctm_config.get('certainty_scaling_factor', 1.0)
+            
+        def _init_adapter_weights(self):
+            """Initialize adapter weights for stable training."""
+            # Zero init the linear layers
+            for module in [self.down_proj, self.up_proj]:
+                for layer in module:
+                    if isinstance(layer, nn.Linear):
+                        nn.init.zeros_(layer.weight)
+                        nn.init.zeros_(layer.bias)
+            print("Initialized CTMAdapter projections with zero weights")
+            
+        def forward(self, x_llm):
+            batch_size, seq_len, _ = x_llm.shape
+            residual = x_llm
+            
+            # Apply down_proj before feeding to CTM core
+            down_projected = self.down_proj(x_llm)
+            
+            # Send down-projected features to CTM - NOW capture certainties!
+            ctm_predictions, ctm_certainties, _ = self.ctm_core(down_projected)  # (B, L, T), (B, 2, T), _
+            
+            # Get final thought
+            processed_features = ctm_predictions[:, :, -1]  # (B, L)
+            
+            # Broadcast to sequence length
+            processed_features = processed_features.unsqueeze(1).expand(-1, seq_len, -1)  # (B, L, H)
+            
+            # Apply up_proj to CTM output
+            delta_h = self.up_proj(processed_features)
+            
+            # Use certainty to weight the delta
+            if self.use_certainty_weighting:
+                # Extract certainty values (certainties[:, 1, :] is the actual certainty, not entropy)
+                certainty_values = ctm_certainties[:, 1, :]  # (B, T)
+                
+                if self.certainty_weighting_mode == 'final':
+                    # Use certainty from final iteration
+                    certainty_weight = certainty_values[:, -1]  # (B,)
+                elif self.certainty_weighting_mode == 'max':
+                    # Use maximum certainty across all iterations
+                    certainty_weight = certainty_values.max(dim=1)[0]  # (B,)
+                elif self.certainty_weighting_mode == 'avg':
+                    # Use average certainty across all iterations
+                    certainty_weight = certainty_values.mean(dim=1)  # (B,)
+                else:
+                    raise ValueError(f"Unknown certainty_weighting_mode: {self.certainty_weighting_mode}")
+                
+                # Scale and reshape certainty weight to broadcast with delta_h
+                certainty_weight = certainty_weight * self.certainty_scaling_factor  # (B,)
+                certainty_weight = certainty_weight.unsqueeze(1).unsqueeze(2)  # (B, 1, 1)
+                
+                # Apply certainty weighting to delta
+                delta_h = delta_h * certainty_weight
+            
+            return residual + delta_h
 
     # Hidden size from user comment/model config
     hidden_size = model.config.hidden_size # Get hidden size from the loaded model's config
     print(f"Using hidden_size: {hidden_size}")
 
-    # Initialize W&B
-    # Generate a unique run ID for this training session
-    run_id = f"run_Qwen_Adapter_0.5B_Instruct__Linear__{int(time.time())}" 
-    wandb.init(project="adapter_llm_training", name=run_id, config={
-        "learning_rate": 1e-4, # Example, adjust as needed
-        "epochs": 1, # Example, adjust as needed
-        "batch_size": 3, # Example, adjust as needed
-        "model_name": "Qwen/Qwen2.5-0.5B-Instruct",
-        "adapter_bottleneck": 1024,
-        "dataset": "PrimeIntellect/real-world-swe-problems",
-        "run_id": run_id,
-        "wandb_api_key": "5c0d2d6b1fcad21af4e0cc3894c119285c4ddae5"
-    })
-    # Instantiate the adapter
-    adapter = Adapter(input_dim=hidden_size, bottleneck_dim=wandb.config.adapter_bottleneck) # bottleneck_dim can be tuned
+    
+    # Instantiate the CTM adapter
+    ctm_adapter_config = {k: v for k, v in wandb.config.items() if k.startswith('ctm_')}
+    adapter = CTMAdapter(llm_hidden_dim=hidden_size, ctm_config=ctm_adapter_config)
 
 
     # Training Loop Setup
@@ -103,6 +230,10 @@ def modal__train_adapter_ctm():
     model.to(device)
     adapter.to(device)
 
+    print("\nModel Structure:")
+    print(model)
+    print("Adapter Structure:")
+    print(adapter)
     # Freeze all parameters of the base model
     for param in model.parameters():
         param.requires_grad = False
@@ -114,22 +245,75 @@ def modal__train_adapter_ctm():
         param.requires_grad = True
     print("Adapter parameters are trainable.")
 
+    print(f"Tokenizer model max length: {tokenizer.model_max_length}")
 
-    # Data preprocessing function
+    preprocess_sizes = []
+    # Add this function before the preprocess_function definition
+    def find_global_max_length(dataset, tokenizer):
+        """Find the maximum sequence length across the entire dataset"""
+        print("Computing global maximum sequence length...")
+        max_length = 0
+        
+        for i, example in enumerate(dataset):
+            if i % 2500 == 0:  # Progress indicator
+                print(f"Processed {i}/{len(dataset)} examples...")
+                
+            prompt_with_eos = example["prompt"] + tokenizer.eos_token 
+            full_text = prompt_with_eos + example["gold_standard_solution"] + tokenizer.eos_token
+            
+            # Tokenize without truncation to get true length
+            tokenized = tokenizer(full_text, truncation=False, padding=False)
+            current_length = len(tokenized["input_ids"])
+            max_length = max(max_length, current_length)
+        
+        print(f"Global maximum sequence length: {max_length} tokens")
+        return max_length
+
+    # Updated preprocess_function to use global max length
     def preprocess_function(examples):
-        # Concatenate prompt and gold_standard_solution for Causal LM training
-        # The model learns to predict the solution given the prompt.
-        inputs = [prompt + tokenizer.eos_token + solution + tokenizer.eos_token 
-                for prompt, solution in zip(examples["prompt"], examples["gold_standard_solution"])]
+        processed_examples = {
+            "input_ids": [],
+            "attention_mask": [],
+            "labels": []
+        }
         
-        # Tokenize
-        # max_length should be chosen based on model's capacity and typical sequence lengths in dataset
-        # Padding will be handled by the DataCollatorForLanguageModeling
-        model_inputs = tokenizer(inputs, max_length=32768, padding="do_not_pad", truncation=True)
-        
-        # DataCollatorForLanguageModeling will create labels by copying input_ids and handling padding for labels with -100
-        # So, we don't need to create model_inputs["labels"] here.
-        return model_inputs
+        for prompt, solution in zip(examples["prompt"], examples["gold_standard_solution"]):
+            prompt_with_eos = prompt + tokenizer.eos_token 
+            full_text = prompt_with_eos + solution + tokenizer.eos_token
+
+            # Tokenize the full text using global max length
+            tokenized_full = tokenizer(
+                full_text, 
+                max_length=global_max_length,  # Use the computed global max length
+                padding="max_length",
+                truncation=True, 
+                return_attention_mask=True
+            )
+
+            # Tokenize the prompt part separately to find its length
+            tokenized_prompt = tokenizer(
+                prompt_with_eos,
+                truncation=True,
+                padding=False,
+                add_special_tokens=False # Important: eos_token already added
+            )
+            
+            prompt_tokens_length = len(tokenized_prompt["input_ids"])
+
+            # Create labels: initially a copy of input_ids
+            labels = list(tokenized_full["input_ids"]) # Make it a list for modification
+
+            # Mask out the prompt tokens in the labels
+            # The model should only learn to predict the solution part
+            for i in range(prompt_tokens_length):
+                if i < len(labels): # Ensure we don't go out of bounds if full_text was truncated shorter than prompt
+                    labels[i] = -100
+
+            processed_examples["input_ids"].append(tokenized_full["input_ids"])
+            processed_examples["attention_mask"].append(tokenized_full["attention_mask"])
+            processed_examples["labels"].append(labels) # Use the modified labels
+
+        return processed_examples
 
     # Split dataset and prepare fixed sample for generation
     num_total_examples = len(ds)
@@ -175,10 +359,25 @@ def modal__train_adapter_ctm():
 
     print(f"Training set size: {len(train_ds) if train_ds else 0}")
 
+    # Compute global max length BEFORE preprocessing
+    if train_ds and len(train_ds) > 0:
+        global_max_length = find_global_max_length(train_ds, tokenizer)
+        
+        # Cap it to model's context window as safety measure
+        model_max_length = 32768  # Your model's context window
+        if global_max_length > model_max_length:
+            print(f"Warning: Dataset max length ({global_max_length}) exceeds model context window ({model_max_length}). Capping to model limit.")
+            global_max_length = model_max_length
+        
+        print(f"Using global max length: {global_max_length} tokens")
+    else:
+        global_max_length = 4096  # Fallback
+
     print("Starting dataset preprocessing for training data...")
     if train_ds and len(train_ds) > 0:
         tokenized_train_ds = train_ds.map(preprocess_function, batched=True, remove_columns=train_ds.column_names)
         print("Training dataset preprocessing finished.")
+        print(f"Preprocess sizes: {preprocess_sizes}")
     else:
         print("Skipping training dataset preprocessing as train_ds is empty or None.")
         tokenized_train_ds = None
@@ -186,7 +385,7 @@ def modal__train_adapter_ctm():
     # Function to generate and log a sample
     def generate_and_log_sample(model, adapter, tokenizer, device, epoch, run_id, epoch_completion, current_loss, test_ds, train_ds, max_new_tokens=30000, base_filename="generation_sample.json"):
         # global test_ds, train_ds # Ensure we're using the globally defined datasets
-
+        print('Generating and logging sample INSIDE...')
         # Determine which dataset to use for sampling
         sample_source_ds = None
         if test_ds and len(test_ds) > 0:
@@ -199,14 +398,18 @@ def modal__train_adapter_ctm():
             print("Skipping sample generation as no dataset is available.")
             return
 
+        print('Selecting a random sample...')
         # Select a random sample
         sample_index = random.randint(0, len(sample_source_ds) - 1)
+        print('Sample selected.')
         raw_sample = sample_source_ds[sample_index]
         raw_prompt_text = raw_sample["prompt"]
         gold_solution = raw_sample["gold_standard_solution"]
         
+        print('Tokenizing prompt...')
         # Tokenize only the prompt part for generation input
         prompt_ids = tokenizer(raw_prompt_text + tokenizer.eos_token, return_tensors="pt", truncation=True, max_length=32768).input_ids.to(device)
+        print('Prompt tokenized.')
 
         if prompt_ids is None: # Should not happen if a sample was selected
             print("Skipping sample generation as no prompt is available after selection.")
@@ -215,9 +418,11 @@ def modal__train_adapter_ctm():
         model.eval()
         adapter.eval()
         generated_ids = prompt_ids.clone() # Start with the prompt
-
+        print('Starting generation...')
         with torch.no_grad():
             for _ in range(max_new_tokens):
+                if _ % 150 == 0:
+                    print('Generating next token...', _)
                 # Get model outputs (hidden states)
                 outputs = model(input_ids=generated_ids, output_hidden_states=True)
                 last_hidden_states = outputs.hidden_states[-1]
@@ -366,7 +571,7 @@ def modal__train_adapter_ctm():
         exit("Exiting: No data for training DataLoader.")
 
 
-    # Optimizer
+    # Optimizer - Using AdamW 
     optimizer = optim.AdamW(adapter.parameters(), lr=wandb.config.learning_rate)
 
     # Training configuration
@@ -392,7 +597,7 @@ def modal__train_adapter_ctm():
         # Generate sample at the start of each epoch
         print(f"Generating sample for epoch {epoch+1} start...")
         # Pass None for current_loss as it's not available yet
-        #generate_and_log_sample(model, adapter, tokenizer, device, epoch=epoch, run_id=run_id, epoch_completion=0.0, current_loss=None, test_ds=test_ds, train_ds=train_ds)
+        generate_and_log_sample(model, adapter, tokenizer, device, epoch=epoch, run_id=run_id, epoch_completion=0.0, current_loss=None, test_ds=test_ds, train_ds=train_ds)
 
 
         epoch_losses = []
@@ -497,39 +702,39 @@ def modal__train_adapter_ctm():
         wandb.finish()
 
 
-    # Model Structure:
-    # Qwen2ForCausalLM(
-    #   (model): Qwen2Model(
-    #     (embed_tokens): Embedding(151936, 1536)
-    #     (layers): ModuleList(
-    #       (0-27): 28 x Qwen2DecoderLayer(
-    #         (self_attn): Qwen2Attention(
-    #           (q_proj): Linear(in_features=1536, out_features=1536, bias=True)
-    #           (k_proj): Linear(in_features=1536, out_features=256, bias=True)
-    #           (v_proj): Linear(in_features=1536, out_features=256, bias=True)
-    #           (o_proj): Linear(in_features=1536, out_features=1536, bias=False)
-    #         )
-    #         (mlp): Qwen2MLP(
-    #           (gate_proj): Linear(in_features=1536, out_features=8960, bias=False)
-    #           (up_proj): Linear(in_features=1536, out_features=8960, bias=False)
-    #           (down_proj): Linear(in_features=8960, out_features=1536, bias=False)
-    #           (act_fn): SiLU()
-    #         )
-    #         (input_layernorm): Qwen2RMSNorm((1536,), eps=1e-06)
-    #         (post_attention_layernorm): Qwen2RMSNorm((1536,), eps=1e-06)
-    #       )
-    #     )
-    #     (norm): Qwen2RMSNorm((1536,), eps=1e-06)
-    #     (rotary_emb): Qwen2RotaryEmbedding()
-    #   )
-    #   (lm_head): Linear(in_features=1536, out_features=151936, bias=False)
-    # )
-    # 
-    # LM Head Structure:
-    # Linear(in_features=1536, out_features=151936, bias=False)
-    # 
-    # Hidden size from config: 1536
-    # Vocabulary size from config: 151936
+# Model Structure:
+# Qwen2ForCausalLM(
+#   (model): Qwen2Model(
+#     (embed_tokens): Embedding(151936, 896)
+#     (layers): ModuleList(
+#       (0-23): 24 x Qwen2DecoderLayer(
+#         (self_attn): Qwen2Attention(
+#           (q_proj): Linear(in_features=896, out_features=896, bias=True)
+#           (k_proj): Linear(in_features=896, out_features=128, bias=True)
+#           (v_proj): Linear(in_features=896, out_features=128, bias=True)
+#           (o_proj): Linear(in_features=896, out_features=896, bias=False)
+#         )
+#         (mlp): Qwen2MLP(
+#           (gate_proj): Linear(in_features=896, out_features=4864, bias=False)
+#           (up_proj): Linear(in_features=896, out_features=4864, bias=False)
+#           (down_proj): Linear(in_features=4864, out_features=896, bias=False)
+#           (act_fn): SiLU()
+#         )
+#         (input_layernorm): Qwen2RMSNorm((896,), eps=1e-06)
+#         (post_attention_layernorm): Qwen2RMSNorm((896,), eps=1e-06)
+#       )
+#     )
+#     (norm): Qwen2RMSNorm((896,), eps=1e-06)
+#     (rotary_emb): Qwen2RotaryEmbedding()
+#   )
+#   (lm_head): Linear(in_features=896, out_features=151936, bias=False)
+# )
+# 
+# LM Head Structure:
+# Linear(in_features=896, out_features=151936, bias=False)
+# 
+# Hidden size from config: 896
+# Vocabulary size from config: 151936
 
 @app.local_entrypoint()
 def main():

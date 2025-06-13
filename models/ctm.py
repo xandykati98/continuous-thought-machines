@@ -3,7 +3,7 @@ import torch
 import numpy as np
 import math
 
-from models.modules import ParityBackbone, SynapseUNET, Squeeze, SuperLinear, LearnableFourierPositionalEncoding, MultiLearnableFourierPositionalEncoding, CustomRotationalEmbedding, CustomRotationalEmbedding1D, ShallowWide
+from models.modules import ParityBackbone, SynapseUNET, Squeeze, SuperLinear, LearnableFourierPositionalEncoding, MultiLearnableFourierPositionalEncoding, CustomRotationalEmbedding, CustomRotationalEmbedding1D, SequenceRotationalEmbedding, ShallowWide, TokenProcessingBackbone
 from models.resnet import prepare_resnet_backbone
 from models.utils import compute_normalized_entropy
 
@@ -226,7 +226,16 @@ class ContinuousThoughtMachine(nn.Module):
         initial_rgb = self.initial_rgb(x)
         self.kv_features = self.backbone(initial_rgb)
         pos_emb = self.positional_embedding(self.kv_features)
-        combined_features = (self.kv_features + pos_emb).flatten(2).transpose(1, 2)
+        
+        # Handle different backbone types appropriately
+        if self.backbone_type == 'token-processing':
+            # For sequence data, kv_features is already (B, L, D)
+            # pos_emb is (B, L, D) from CustomRotationalEmbedding1D
+            combined_features = self.kv_features + pos_emb
+        else:
+            # For image data, use the original logic
+            combined_features = (self.kv_features + pos_emb).flatten(2).transpose(1, 2)
+        
         kv = self.kv_proj(combined_features)
         return kv
 
@@ -264,6 +273,8 @@ class ContinuousThoughtMachine(nn.Module):
         """
         if self.backbone_type == 'shallow-wide':
             return 2048
+        elif self.backbone_type == 'token-processing':
+            return 2048  # TokenProcessingBackbone outputs 2048 dimensions
         elif self.backbone_type == 'parity_backbone':
             return self.d_input
         elif 'resnet' in self.backbone_type:
@@ -292,6 +303,8 @@ class ContinuousThoughtMachine(nn.Module):
         """
         if self.backbone_type == 'shallow-wide':
             self.backbone = ShallowWide()
+        elif self.backbone_type == 'token-processing':
+            self.backbone = TokenProcessingBackbone(self.d_input)
         elif self.backbone_type == 'parity_backbone':
             d_backbone = self.get_d_backbone()
             self.backbone = ParityBackbone(n_embeddings=2, d_embedding=d_backbone)
@@ -319,6 +332,9 @@ class ContinuousThoughtMachine(nn.Module):
 
         CustomRotationalEmbedding:
             Simple sinusoidal embedding to encourage interpretability
+            
+        SequenceRotationalEmbedding:
+            Rotational embedding specifically designed for sequence data processing
         """
         if self.positional_embedding_type == 'learnable-fourier':
             return LearnableFourierPositionalEncoding(d_backbone, gamma=1 / 2.5)
@@ -328,6 +344,8 @@ class ContinuousThoughtMachine(nn.Module):
             return CustomRotationalEmbedding(d_backbone)
         elif self.positional_embedding_type == 'custom-rotational-1d':
             return CustomRotationalEmbedding1D(d_backbone)
+        elif self.positional_embedding_type == 'sequence-rotational':
+            return SequenceRotationalEmbedding(d_backbone)
         elif self.positional_embedding_type == 'none':
             return lambda x: 0  # Default no-op
         else:
@@ -461,6 +479,8 @@ class ContinuousThoughtMachine(nn.Module):
 
         if self.backbone_type=='none' and self.positional_embedding_type!='none':
             raise AssertionError("There should be no positional embedding if there is no backbone.")
+        
+        # Note: token-processing backbone is allowed to have positional embeddings
 
     def calculate_synch_representation_size(self, n_synch):
         """

@@ -1,5 +1,11 @@
 -make generations longer
 -highlight sample test with colors
 -w&biases
-ctm adapter VS normal adapter
-save model
+-ctm adapter VS normal adapter
+-save model
+
+-multiply the delta by the certainties
+-if muon doesnt work, go back to adamw
+bulk eval better script
+calculate the maximum memory use based on the provided parameters before execution, this will help determine which GPU to use or where is happening way too much computation
+better understand if adding activations on the projections

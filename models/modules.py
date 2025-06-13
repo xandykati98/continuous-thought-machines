@@ -689,4 +689,99 @@ class CustomRotationalEmbedding1D(nn.Module):
         pe = self.projection(rotated_vectors)
         pe = torch.repeat_interleave(pe.unsqueeze(0), x.size(0), 0)
         return pe.transpose(1, 2) # Transpose for compatibility with other backbones
+
+
+class SequenceRotationalEmbedding(nn.Module):
+    """
+    Rotational Positional Embedding specifically designed for sequence data.
+    
+    Unlike CustomRotationalEmbedding1D which was designed for 2D spatial data,
+    this embedding is tailored for 3D sequence tensors (batch, seq_len, features).
+    It generates positional embeddings based on the sequence length rather than
+    feature dimensions.
+    
+    Args:
+        d_model (int): Dimensionality of the output embeddings.
+    """
+    def __init__(self, d_model):
+        super(SequenceRotationalEmbedding, self).__init__()
+        self.projection = nn.Linear(2, d_model)
+
+    def forward(self, x):
+        """
+        Generate rotational positional embeddings for sequence data.
+        
+        Args:
+            x (torch.Tensor): Input sequence tensor, shape (batch, seq_len, features)
+        
+        Returns:
+            torch.Tensor: Positional embeddings, shape (batch, seq_len, d_model)
+        """
+        batch_size, seq_len, _ = x.shape
+        device = x.device
+        
+        start_vector = torch.tensor([0., 1.], device=device, dtype=torch.float)
+        
+        # Generate angles based on sequence positions (not feature dimensions)
+        theta_rad = torch.deg2rad(torch.linspace(0, 180, seq_len, device=device))
+        cos_theta = torch.cos(theta_rad)
+        sin_theta = torch.sin(theta_rad)
+        
+        # Create rotation matrices for each sequence position
+        # Shape: (seq_len, 2, 2)
+        rotation_matrices = torch.stack([
+            torch.stack([cos_theta, -sin_theta], dim=1),
+            torch.stack([sin_theta, cos_theta], dim=1)
+        ], dim=1)
+
+        # Rotate the start vector for each position
+        # Shape: (seq_len, 2)
+        rotated_vectors = torch.einsum('sij,j->si', rotation_matrices, start_vector)
+
+        # Project to d_model dimensions
+        # Shape: (seq_len, d_model)
+        pe = self.projection(rotated_vectors)
+        
+        # Expand for batch dimension
+        # Shape: (batch_size, seq_len, d_model)
+        pe = pe.unsqueeze(0).expand(batch_size, -1, -1)
+        
+        return pe
+
+
+class TokenProcessingBackbone(nn.Module):
+    """
+    Token Processing Backbone for sequence data.
+    
+    Designed specifically for language model adapters that work with 3D sequence tensors
+    (batch, seq_len, hidden_dim) instead of 4D image tensors. Provides rich feature
+    processing similar to ShallowWide but adapted for sequential data.
+    
+    Args:
+        d_input (int): Input dimension from the adapter's down projection
+    """
+    def __init__(self, d_input):
+        super().__init__()
+        # Mimic ShallowWide architecture but with Linear layers instead of Conv2d
+        self.layers = nn.Sequential(
+            nn.Linear(d_input, 4096),
+            nn.GLU(dim=-1),  # Halves to 2048
+            nn.LayerNorm(2048),
+            # Grouped linear operation (mimics grouped convolution) 
+            nn.Linear(2048, 4096),
+            nn.GLU(dim=-1),  # Halves to 2048
+            nn.LayerNorm(2048)
+        )
+    
+    def forward(self, x):
+        """
+        Forward pass for token processing.
+        
+        Args:
+            x (torch.Tensor): Input tensor, shape (batch, seq_len, d_input)
+        
+        Returns:
+            torch.Tensor: Processed features, shape (batch, seq_len, 2048)
+        """
+        return self.layers(x)
     
